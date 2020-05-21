@@ -1200,16 +1200,16 @@ MonoBehaviour:
   NoseBreath: {fileID: 8300000, guid: c580c72c47883234399e20a7672e5f15, type: 3}
   idePitch: 1
   walkPitch: 1.3
-  ideVolume: 0.01
-  walkVolume: 0.06
+  ideVolume: 0.001
+  walkVolume: 0.01
   MouthBreath: {fileID: 8300000, guid: 11e4a845e6e550a4496b7ca5f3fafb7a, type: 3}
-  MouthVolumeMin: 0.2
-  MouthVolumeMax: 0.6
+  MouthVolumeMin: 0.05
+  MouthVolumeMax: 0.1
   MouthPitchMin: 1
   MouthPitchMax: 1.2
   strength: 8
   HeartbeatVolumeMin: 0.05
-  HeartbeatVolumeMax: 0.3
+  HeartbeatVolumeMax: 0.2
   HeartbeatPitchMin: 1
   HeartbeatPitchMax: 1.3
   FootStone: {fileID: 8300000, guid: 3bc5bb5f4e3a3704c8eaa26609071877, type: 3}
@@ -1220,6 +1220,7 @@ MonoBehaviour:
   StratFootVolume: 1
   FootRandomPitch: 1
   StratFootPitch: 1
+  Jump: {fileID: 8300000, guid: f6dd728430eb5104384cc59f04258562, type: 3}
 --- !u!82 &4013478117434356119
 AudioSource:
   m_ObjectHideFlags: 0

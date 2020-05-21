@@ -33,7 +33,10 @@ public class Character : TaskBehavior
 
     private string m_leftFootName = "Ellen_Left_LowerLeg";
     private string m_rightFootName = "Ellen_Right_LowerLeg";
+    private bool m_isJumpStart = false;
 
+    public List<Collider> RagdollColliders = new List<Collider>();
+    public List<Rigidbody> RagdollRigidbodys = new List<Rigidbody>();
     void Start()
     {
         m_animator = GetComponent<Animator>();
@@ -48,6 +51,8 @@ public class Character : TaskBehavior
         m_phone = Tool.GetGameObjAllChild(gameObject, "Phone");
         m_rightHand = Tool.GetGameObjAllChild(gameObject, "Ellen_Right_Hand");
         m_spine = Tool.GetGameObjAllChild(gameObject, "Ellen_Spine");
+
+        InitRagdoll();
     }
 
 
@@ -57,9 +62,10 @@ public class Character : TaskBehavior
     {
         if (m_fLoatTime != -1 && Time.time - m_fLoatTime > 1f)
         {
-            Debug.Log("float");
+            //Debug.Log("float");
             m_isGrounded = false;
         }
+        //Debug.Log(m_isGrounded);
         m_animator?.SetBool("Ground", m_isGrounded);
 
 
@@ -78,16 +84,13 @@ public class Character : TaskBehavior
         m_animator.SetBool("Light", !m_animator.GetBool("Light"));
     }
 
-
-
-
     private void InputEvent()
     {
         if (m_joystick != null)
         {
             var verValue = m_joystick.m_vertical;
             float mov = 0;
-            if (verValue > 0.7f && m_joystick.m_length > 600)
+            if (verValue > 0.7f && m_joystick.m_length > 400)
             {
                 m_animator?.SetFloat("Blend", 1);
                 mov = m_joystick.m_vertical * Time.deltaTime * m_runSpeed;
@@ -112,21 +115,26 @@ public class Character : TaskBehavior
 
     private void Jump()
     {
-        Debug.Log("jump");
+        //Debug.Log("jump");
+        if (m_isJumpStart) return;
+        m_isJumpStart = true;
         m_isGrounded = false;
-        m_animator?.SetTrigger("Jump");
         m_rigidbody.AddForce(Vector3.up * m_jumpPower);
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-/*        Debug.Log("inter");*/
+        /*        Debug.Log("inter");*/
         var contactPoints = collision.contacts;
         for (int i = 0; i < contactPoints.Length; i++)
         {
             if (!m_Collisions.Contains(collision.collider))
             {
                 m_Collisions.Add(collision.collider);
+            }
+            if (contactPoints[i].thisCollider.gameObject.Equals(m_leftFoot) || contactPoints[i].thisCollider.gameObject.Equals(m_rigthFoot))
+            {
+                m_isJumpStart = false;
             }
         }
         /*            if (contactPoints[i].thisCollider.gameObject.Equals(m_leftFoot))
@@ -151,9 +159,9 @@ public class Character : TaskBehavior
         for (int i = 0; i < collision.contactCount; i++)
         {
             var name = collision.contacts[i].thisCollider.name;
-            //Debug.Log(name);
             if (name.Equals(m_leftFoot.name) || name.Equals(m_rigthFoot.name))
             {
+                if (m_isJumpStart) continue;
                 m_isGrounded = true;
                 m_fLoatTime = -1;
             }
@@ -213,6 +221,58 @@ public class Character : TaskBehavior
 
         m_isTakePhone = !m_isTakePhone;
 
+    }
+
+    private void InitRagdoll()
+    {
+        Rigidbody[] Rigidbodys = GetComponentsInChildren<Rigidbody>();
+        for (int i = 0; i < Rigidbodys.Length; i++)
+        {
+            if (Rigidbodys[i] == GetComponent<Rigidbody>())
+            {
+                //排除正常状态的Rigidbody
+                continue;
+            }
+            //添加Rigidbody和Collider到List
+            RagdollRigidbodys.Add(Rigidbodys[i]);
+            Rigidbodys[i].isKinematic = true;
+            Collider RagdollCollider = Rigidbodys[i].gameObject.GetComponent<Collider>();
+            RagdollCollider.isTrigger = true;
+            RagdollColliders.Add(RagdollCollider);
+        }
+    }
+    IEnumerator SetAnimatorEnable(bool Enable)
+    {
+        yield return new WaitForEndOfFrame();
+        //Anim.enabled = Enable;
+    }
+    private void EnableRagdoll()
+    {
+        //开启布娃娃状态的所有Rigidbody和Collider
+        for (int i = 0; i < RagdollRigidbodys.Count; i++)
+        {
+            RagdollRigidbodys[i].isKinematic = false;
+            RagdollColliders[i].isTrigger = false;
+        }
+        //关闭正常状态的Collider
+        GetComponent<Collider>().enabled = false;
+        //下一帧关闭正常状态的动画系统
+        GetComponent<Animator>().enabled = false;
+        StartCoroutine(SetAnimatorEnable(false));
+    }
+
+    private void DisableRagdoll()
+    {
+        //关闭布娃娃状态的所有Rigidbody和Collider
+        for (int i = 0; i < RagdollRigidbodys.Count; i++)
+        {
+            RagdollRigidbodys[i].isKinematic = true;
+            RagdollColliders[i].isTrigger = true;
+        }
+        //开启正常状态的Collider
+        GetComponent<Collider>().enabled = true;
+        //下一帧开启正常状态的动画系统
+        StartCoroutine(SetAnimatorEnable(true));
     }
 
 

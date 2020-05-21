@@ -30,7 +30,7 @@ public class JumpButton : TaskBehavior
     public void BeginDrag(Vector2 point)
     {
         //LogDisplay.obj?.AddLog("begin;" );
-        Debug.Log("begin");
+        //Debug.Log("begin");
     }
 
     public void EndDrag(Vector2 point, Vector2 dic, float length)
@@ -43,7 +43,7 @@ public class JumpButton : TaskBehavior
 
             OnJump();
             //LogDisplay.obj?.AddLog("jump");
-            Debug.Log("jump");
+            //Debug.Log("jump");
         }
 
 

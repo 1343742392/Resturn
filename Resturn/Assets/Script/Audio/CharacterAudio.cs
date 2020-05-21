@@ -29,21 +29,25 @@ public class CharacterAudio : MonoBehaviour
     public float StratFootVolume = 1;
     public int FootRandomPitch = 2;
     public float StratFootPitch = 1;
+
+    [SerializeField] public AudioClip Jump = null;
     AudioSource[] m_audioSources = null;
     AudioSource m_rFootAudio = null;
     AudioSource m_lFootAudio = null;
     Animator m_animator = null;
     float m_strength = 0;
 
+
     string beforeFoot = "";
+    private bool m_oldGround = false;
     void Start()
     {
         m_strength = strength;
         m_audioSources = GetComponents<AudioSource>();
         m_animator = GetComponent<Animator>();
 
-        var rfoot = Tool.GetGameObjAllChild(gameObject, "Ellen_Right_Foot");
-        var lfoot = Tool.GetGameObjAllChild(gameObject, "Ellen_Left_Foot");
+        var rfoot = Tool.GetGameObjAllChild(gameObject, "Ellen_Right_LowerLeg");
+        var lfoot = Tool.GetGameObjAllChild(gameObject, "Ellen_Left_LowerLeg");
         m_rFootAudio = rfoot.GetComponent<AudioSource>();
         m_lFootAudio = lfoot.GetComponent<AudioSource>();
     }
@@ -58,12 +62,12 @@ public class CharacterAudio : MonoBehaviour
             var name = contactPoints[0].thisCollider.gameObject.name;
             if (beforeFoot.Equals(name))
                 break;
-            if (name.Equals("Ellen_Right_Foot"))
+            if (name.Equals("Ellen_Right_LowerLeg"))
             {
                 RightFoot(contactPoints[0].otherCollider.gameObject.tag);
                 beforeFoot = name;
             }
-            if (name.Equals("Ellen_Left_Foot"))
+            if (name.Equals("Ellen_Left_LowerLeg"))
             {
                 beforeFoot = name;
                 LeftFoot(contactPoints[0].otherCollider.gameObject.tag);
@@ -133,66 +137,92 @@ public class CharacterAudio : MonoBehaviour
         m_rFootAudio.Play();
     }
 
+    private bool IsJumpUp()
+    {
+        var nowGround = m_animator.GetBool("Ground");
+        //Debug.Log(m_oldGround + "  " + nowGround);
+        if (m_oldGround == true && nowGround == false)
+        {
+            m_oldGround = nowGround;
+            return true;
+        }
+        m_oldGround = nowGround;
+        return false;
+    }
     void Update()
     {
+
         if (m_audioSources == null || m_animator == null) return;
-        if (!m_animator.GetCurrentAnimatorStateInfo(0).IsName("Blend"))
+
+
+        if (IsJumpUp())
         {
-            m_audioSources[0].Stop();
-            return;
+            m_audioSources[0].clip = Jump;
+            m_audioSources[0].volume = 1;
+            m_audioSources[0].pitch = 1;
+            m_audioSources[0].loop = false;
+
+            m_audioSources[0].Play();
+           // Debug.Log("jump");
         }
 
-        var blend = m_animator.GetFloat("Blend");
-        if(blend == 0)
-        {
-            Ide();
-        }
-        else if(blend > 0.8f)
-        {
-            Run();
-        }
-        else 
-        {
-            Walk();
-        }
-        //Debug.Log("p" + m_strength);
 
-        if (m_strength >= strength * 0.59f)
+        if(m_animator.GetBool("Ground"))
         {
-            var p = Mathf.InverseLerp(strength, strength * 0.59f, m_strength);
 
-            m_audioSources[0].volume = Mathf.Lerp(ideVolume, walkVolume, p);
-            m_audioSources[0].pitch = Mathf.Lerp(idePitch, walkPitch, p);
-
-            if (m_audioSources[0].clip == null || !m_audioSources[0].clip.name.Equals(NoseBreath.name))
+            var blend = m_animator.GetFloat("Blend");
+            if (blend == 0)
             {
-                //LogDisplay.obj.AddLog("run");
-                m_audioSources[0].clip = NoseBreath;
-                m_audioSources[0].Play();
+                Ide();
             }
-            if (!m_audioSources[0].isPlaying)
+            else if (blend > 0.8f)
             {
-                //LogDisplay.obj.AddLog("play");
-                m_audioSources[0].Play();
+                Run();
             }
-        }
-        else 
-        {
-            var p = Mathf.InverseLerp(strength * 0.59f, 0, m_strength);
-            m_audioSources[0].volume = Mathf.Lerp(MouthVolumeMin, MouthVolumeMax, p);
-            m_audioSources[0].pitch = Mathf.Lerp(MouthPitchMin, MouthPitchMax, p);
-            if (m_audioSources[0].clip.name != MouthBreath.name)
+            else
             {
-                m_audioSources[0].clip = MouthBreath;
-                m_audioSources[0].Play();
+                Walk();
             }
-            if (!m_audioSources[0].isPlaying)
-            {
-                LogDisplay.obj.AddLog("play");
-                m_audioSources[0].Play();
-            }
+            //Debug.Log("p" + m_strength);
 
+            if (m_strength >= strength * 0.59f)
+            {
+                var p = Mathf.InverseLerp(strength, strength * 0.59f, m_strength);
+
+                m_audioSources[0].volume = Mathf.Lerp(ideVolume, walkVolume, p);
+                m_audioSources[0].pitch = Mathf.Lerp(idePitch, walkPitch, p);
+
+                if (m_audioSources[0].clip == null || !m_audioSources[0].clip.name.Equals(NoseBreath.name))
+                {
+                    //LogDisplay.obj.AddLog("run");
+                    m_audioSources[0].clip = NoseBreath;
+                    m_audioSources[0].Play();
+                }
+                if (!m_audioSources[0].isPlaying)
+                {
+                    //LogDisplay.obj.AddLog("play");
+                    m_audioSources[0].Play();
+                }
+            }
+            else
+            {
+                var p = Mathf.InverseLerp(strength * 0.59f, 0, m_strength);
+                m_audioSources[0].volume = Mathf.Lerp(MouthVolumeMin, MouthVolumeMax, p);
+                m_audioSources[0].pitch = Mathf.Lerp(MouthPitchMin, MouthPitchMax, p);
+                if (m_audioSources[0].clip.name != MouthBreath.name)
+                {
+                    m_audioSources[0].clip = MouthBreath;
+                    m_audioSources[0].Play();
+                }
+                if (!m_audioSources[0].isPlaying)
+                {
+                    LogDisplay.obj.AddLog("play");
+                    m_audioSources[0].Play();
+                }
+
+            }
         }
+
         if (m_audioSources.Length > 1)
         {
             var pos = (strength - m_strength) / strength;

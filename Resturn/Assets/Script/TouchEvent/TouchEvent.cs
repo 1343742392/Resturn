@@ -49,7 +49,7 @@ public class TouchEvent : MonoBehaviour
             if (Input.GetKeyUp(KeyCode.W))
             {
                 var t = new Touch { fingerId = 99, phase = TouchPhase.Ended, position =  new Vector2(300, 600) };
-                Debug.Log(Input.mousePosition);
+                //Debug.Log(Input.mousePosition);
                 Switch(t);
             }
 
