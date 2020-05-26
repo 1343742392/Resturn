@@ -14,6 +14,9 @@ public class ConfigEditor : Editor
     SerializedProperty armorProp;
     SerializedProperty gunProp;
     SerializedProperty fpsProp;
+    SerializedProperty rePlayWaitTimeProp;
+    SerializedProperty rePlayFrameNumProp;
+    SerializedProperty blastTimeProp;
     void OnEnable()
     {
         // Setup the SerializedProperties.
@@ -24,6 +27,9 @@ public class ConfigEditor : Editor
             armorProp = serializedObject.FindProperty("armor");
             gunProp = serializedObject.FindProperty("gun");
             fpsProp = serializedObject.FindProperty("fps");
+            rePlayWaitTimeProp = serializedObject.FindProperty("rePlayWaitTime");
+            rePlayFrameNumProp = serializedObject.FindProperty("rePlayFrameNum");
+            blastTimeProp = serializedObject.FindProperty("blastTime");
         }
         catch
         {
@@ -42,6 +48,13 @@ public class ConfigEditor : Editor
         EditorGUILayout.PropertyField(gunProp, new GUIContent("Gun Object"));
 
         EditorGUILayout.IntSlider(fpsProp, 0, 400, new GUIContent("FPS"));
+
+        EditorGUILayout.Slider(rePlayWaitTimeProp, 0, 20);
+
+        EditorGUILayout.IntSlider(rePlayFrameNumProp, 0, 600);
+
+        EditorGUILayout.IntSlider(blastTimeProp, 0, 60);
+
         serializedObject.ApplyModifiedProperties();
     }
     void ProgressBar(float value, string label)

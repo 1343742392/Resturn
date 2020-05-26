@@ -16,3 +16,6 @@ MonoBehaviour:
   damage: 25
   gun: {fileID: 0}
   fps: 236
+  rePlayWaitTime: 3
+  rePlayFrameNum: 60
+  blastTime: 30

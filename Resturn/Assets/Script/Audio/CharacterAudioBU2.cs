@@ -13,7 +13,7 @@ public class CharacterAudioBU2 : MonoBehaviour
     public float walkVolume = 0.1f;
     [SerializeField] AudioClip MouthBreath = null;
     public float strength = 3;
-    [SerializeField] AudioClip Heartbeat = null;
+/*    [SerializeField] AudioClip Heartbeat = null;*/
 
 
 

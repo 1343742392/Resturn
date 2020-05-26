@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.UIWidgets.foundation;
 using Unity.UIWidgets.ui;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class Character : TaskBehavior
+public class Character : TaskBehavior, ExplosionTarget
 {
     // Start is called before the first frame update
     public float m_rotateSpeed = 10;
@@ -33,26 +35,69 @@ public class Character : TaskBehavior
 
     private string m_leftFootName = "Ellen_Left_LowerLeg";
     private string m_rightFootName = "Ellen_Right_LowerLeg";
+
+    /*    private string m_leftFootName = "Ellen_Right_Foot";
+        private string m_rightFootName = "Ellen_Left_Foot";*/
     private bool m_isJumpStart = false;
 
     public List<Collider> RagdollColliders = new List<Collider>();
     public List<Rigidbody> RagdollRigidbodys = new List<Rigidbody>();
+    [SerializeField]
+    private GameObject mainBone = null;
+    [SerializeField]
+    private GameObject RagdollBone = null;
+    [SerializeField]
+    private GameObject body = null;
+    private Timer m_timer = null;
+
+    private int m_rePlayIndex = -1;
+
+    public string state = "";
+
+
+    class Operation
+    {
+        public Vector3 pos;
+        public Vector3 rot;
+        public float mov;
+        public float rotY;
+        public float ver;
+        public float hor;
+        public float animaValue;
+        public float time;
+        public Operation(float time,float mov, float rotY, float ver, float hor, float animaValue, Vector3 pos, Vector3 rot)
+        {
+            this.time = time;
+            this.mov = mov;
+            this.rotY = rotY;
+            this.ver = ver;
+            this.hor = hor;
+            this.animaValue = animaValue;
+            this.pos = pos;
+            this.rot = rot;
+        }
+    }
+    private List<Operation> operations = new List<Operation>();
     void Start()
     {
+
+
         m_animator = GetComponent<Animator>();
         m_joystick = GameObject.FindWithTag(Tag.joystick)?.GetComponent<Joystick>();
         m_jumpButton = GameObject.FindWithTag(Tag.jump)?.GetComponent<JumpButton>();
 
-        m_leftFoot = Tool.GetGameObjAllChild(gameObject, m_leftFootName);
-        m_rigthFoot = Tool.GetGameObjAllChild(gameObject, m_rightFootName);
+        m_leftFoot = Tool.GetGameObjAllChild(mainBone, m_leftFootName);
+        m_rigthFoot = Tool.GetGameObjAllChild(mainBone, m_rightFootName);
         if(m_jumpButton!=null) m_jumpButton.OnJump = Jump;
         m_rigidbody = GetComponent<Rigidbody>();
 
         m_phone = Tool.GetGameObjAllChild(gameObject, "Phone");
-        m_rightHand = Tool.GetGameObjAllChild(gameObject, "Ellen_Right_Hand");
-        m_spine = Tool.GetGameObjAllChild(gameObject, "Ellen_Spine");
+        m_rightHand = Tool.GetGameObjAllChild(mainBone, "Ellen_Right_Hand");
+        m_spine = Tool.GetGameObjAllChild(mainBone, "Ellen_Spine");
 
         InitRagdoll();
+        m_timer = GetComponent<Timer>();
+        ToDark.obj?.Show();
     }
 
 
@@ -60,6 +105,10 @@ public class Character : TaskBehavior
     // Update is called once per frame
     protected override void UpdateS()
     {
+        if(Input.GetKeyDown(KeyCode.K))
+        {
+            m_rePlayIndex = 300;
+        }
         if (m_fLoatTime != -1 && Time.time - m_fLoatTime > 1f)
         {
             //Debug.Log("float");
@@ -68,8 +117,18 @@ public class Character : TaskBehavior
         //Debug.Log(m_isGrounded);
         m_animator?.SetBool("Ground", m_isGrounded);
 
-
-        InputEvent();
+        if (m_rePlayIndex == -1)
+            InputEvent();
+        else
+        {
+            InputEvent(operations[operations.Count - m_rePlayIndex - 1]);
+            m_rePlayIndex = m_rePlayIndex - 1;
+            if(m_rePlayIndex == 0)
+            {
+                var SceneName = SceneManager.GetActiveScene().name;
+                SceneManager.LoadScene(SceneName);
+            }
+        }
     }
 
     public void OpenLight()
@@ -84,25 +143,123 @@ public class Character : TaskBehavior
         m_animator.SetBool("Light", !m_animator.GetBool("Light"));
     }
 
-    private void InputEvent()
+    public void Dead()
     {
+        if (m_timer == null ) return;
+        EnableRagdoll();
+        
+        //开始回放处到死亡的时间
+        var index = Math.Min(operations.Count - 1, operations.Count - ConfigManager.obj.config.rePlayFrameNum - 1);
+        
+        var time = Time.time - operations[index].time;
+        //死亡时所在帧
+        var deadFrame = operations.Count;
+
+        m_timer.SetTime(ConfigManager.obj.config.rePlayWaitTime);
+
+        //变暗
+        ToDark.obj?.Fade();
+        m_timer.back = new Action(delegate ()
+        {
+            if (state.Equals("dead"))
+                return;
+            state = "dead";
+
+            var ad = GameObject.FindWithTag(Tag.AircraftDead);
+            if(ad != null)
+            {
+                //第一关时
+                var adpos = ad.transform.position;
+                Destroy(ad);
+                var newAd = Instantiate(Resources.Load<GameObject>("Profab/AircraftDead"));
+                newAd.transform.position = adpos;
+                newAd.GetComponent<AircraftDead>().SetBlastTime(time);
+                //Debug.Log(time);
+            }
+            //布娃娃
+            DisableRagdoll();
+            Camera.main.gameObject.SetActive(false);
+            //相机和光
+            var dc = GameObject.FindWithTag(Tag.DeadCamera);
+            dc.GetComponent<Camera>().enabled = true;
+            GameObject.FindWithTag(Tag.Sun).GetComponent<Light>().enabled = true;
+            //停止变暗
+            ToDark.obj.Stop();
+
+            //声音
+            var al = Tool.GetGameObjAllChild(dc, "AL");
+            al.GetComponent<AudioListener>().enabled = true;
+            
+
+
+
+            var offFrame = operations.Count - deadFrame;
+            m_rePlayIndex = ConfigManager.obj.config.rePlayFrameNum + offFrame;
+         });
+        GameObject.FindWithTag(Tag.Input)?.SetActive(false);
+    }
+
+    private void InputEvent(Operation operation = null)
+    {
+/*        if (Input.GetKeyDown(KeyCode.K))
+        {
+            EnableRagdoll();
+        }
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            DisableRagdoll();
+            transform.position = new Vector3(transform.position.x, 10, transform.position.z);
+            GetComponent<Rigidbody>().velocity = Vector3.zero;
+        }
+*/
         if (m_joystick != null)
         {
-            var verValue = m_joystick.m_vertical;
+
+
+            float verValue = 0;
+            float horValue = 0;
             float mov = 0;
-            if (verValue > 0.7f && m_joystick.m_length > 400)
+            float rotY = 0;
+            float animaValue = 0;
+
+            if (operation == null)
             {
-                m_animator?.SetFloat("Blend", 1);
-                mov = m_joystick.m_vertical * Time.deltaTime * m_runSpeed;
+                //计算
+                verValue = m_joystick.m_vertical;
+                horValue = m_joystick.m_horizontal;
+                if (verValue > 0.7f && m_joystick.m_length > 400)
+                {
+                    animaValue = 1;
+                    mov = m_joystick.m_vertical * Time.deltaTime * m_runSpeed;
+                }
+                else
+                {
+                    animaValue = 0.7f;
+                    mov = m_joystick.m_vertical * Time.deltaTime * m_walkSpeed;
+                }
+                rotY = horValue * Time.deltaTime * m_rotateSpeed;
+
+                //保存
+                operations.Add(new Operation(Time.time,mov, rotY, verValue, horValue, animaValue, transform.position, transform.rotation.eulerAngles));
+
             }
             else
             {
-                m_animator?.SetFloat("Blend", (float)Math.Min(verValue, 0.7));
-                mov =  m_joystick.m_vertical * Time.deltaTime * m_walkSpeed;
+                verValue = operation.ver;
+                horValue = operation.hor;
+                mov = operation.mov;
+                rotY = operation.rotY;
+                animaValue = operation.animaValue;
+                transform.position = operation.pos;
+                transform.rotation = Quaternion.Euler(operation.rot);
+                //Debug.Log(verValue + " " + animaValue);
             }
-            var rotY = m_joystick.m_horizontal * Time.deltaTime * m_rotateSpeed;
+
+            m_animator?.SetFloat("Blend", (float)Math.Min(verValue, animaValue));
             transform.localPosition += transform.forward * mov;
             transform.Rotate(0, rotY, 0);
+
+
 
 
             if (camera != null)
@@ -132,29 +289,24 @@ public class Character : TaskBehavior
             {
                 m_Collisions.Add(collision.collider);
             }
-            if (contactPoints[i].thisCollider.gameObject.Equals(m_leftFoot) || contactPoints[i].thisCollider.gameObject.Equals(m_rigthFoot))
+            var thisName = contactPoints[i].thisCollider.gameObject.name;
+            //Debug.Log(contactPoints[i].otherCollider.name);
+            if (thisName.Equals(m_leftFoot.name) || thisName.Equals(m_rigthFoot.name))
             {
                 m_isJumpStart = false;
             }
+            else if(thisName.Equals("BlastPhysics"))
+            {
+                Debug.Log("run");
+            }
         }
-        /*            if (contactPoints[i].thisCollider.gameObject.Equals(m_leftFoot))
-                    {
-                        if (!m_lCollisions.Contains(collision.collider))
-                        {
-                            m_lCollisions.Add(collision.collider);
-                        }
-                        m_fLoatTime = -1;
-                    }
-                }*/
-
-        //Debug.Log("inter lc " + m_lCollisions.Count + " rc  " + m_rCollisions.Count);
     }
 
 
     private void OnCollisionStay(Collision collision)
     {
-/*        Debug.Log("stay" + collision.contactCount);
-        m_isGrounded = false;
+        //Debug.Log("stay" + collision.contactCount);
+/*        m_isGrounded = false;
         m_fLoatTime = Time.time;*/
         for (int i = 0; i < collision.contactCount; i++)
         {
@@ -200,7 +352,7 @@ public class Character : TaskBehavior
     //Anima Event
     private void TakePhone()
     {
-        Debug.Log("run");
+        //Debug.Log("run");
         if (m_rightHand != null && m_spine != null && m_phone != null)
         {
             if (m_isTakePhone)
@@ -225,7 +377,15 @@ public class Character : TaskBehavior
 
     private void InitRagdoll()
     {
-        Rigidbody[] Rigidbodys = GetComponentsInChildren<Rigidbody>();
+        RagdollBone.SetActive(false);
+        var g = Tool.GetGameObjAllChild(mainBone, "Ellen_Hips");
+        var sr = body.GetComponent<SkinnedMeshRenderer>();
+        Transform[] bfB = sr.bones;
+        Tool.SetBone(sr, g);
+        Transform[] afB = sr.bones;
+
+
+        Rigidbody[] Rigidbodys = RagdollBone.GetComponentsInChildren<Rigidbody>();
         for (int i = 0; i < Rigidbodys.Length; i++)
         {
             if (Rigidbodys[i] == GetComponent<Rigidbody>())
@@ -241,28 +401,42 @@ public class Character : TaskBehavior
             RagdollColliders.Add(RagdollCollider);
         }
     }
-    IEnumerator SetAnimatorEnable(bool Enable)
-    {
-        yield return new WaitForEndOfFrame();
-        //Anim.enabled = Enable;
-    }
+
     private void EnableRagdoll()
     {
+        var audios = GetComponentsInChildren<AudioSource>();
+        foreach(var audio in audios)
+        {
+            audio.enabled = false;
+        }
         //开启布娃娃状态的所有Rigidbody和Collider
+        mainBone.SetActive(false);
+        RagdollBone.SetActive(true);
+        var rootBone = Tool.GetGameObjAllChild(RagdollBone, "Ellen_Hips");
+        Tool.SetBone(body.GetComponent<SkinnedMeshRenderer>(), rootBone);
         for (int i = 0; i < RagdollRigidbodys.Count; i++)
         {
             RagdollRigidbodys[i].isKinematic = false;
             RagdollColliders[i].isTrigger = false;
         }
         //关闭正常状态的Collider
-        GetComponent<Collider>().enabled = false;
+        //GetComponent<Collider>().enabled = false;
         //下一帧关闭正常状态的动画系统
         GetComponent<Animator>().enabled = false;
-        StartCoroutine(SetAnimatorEnable(false));
     }
 
     private void DisableRagdoll()
     {
+        var audios = GetComponentsInChildren<AudioSource>();
+        foreach (var audio in audios)
+        {
+            audio.enabled = true;
+        }
+        transform.position = new Vector3(transform.position.x,  2.4f, transform.position.z);
+        mainBone.SetActive(true);
+        RagdollBone.SetActive(false);
+        var rootBone = Tool.GetGameObjAllChild(mainBone, "Ellen_Hips");
+        Tool.SetBone(body.GetComponent<SkinnedMeshRenderer>(), rootBone);
         //关闭布娃娃状态的所有Rigidbody和Collider
         for (int i = 0; i < RagdollRigidbodys.Count; i++)
         {
@@ -272,8 +446,18 @@ public class Character : TaskBehavior
         //开启正常状态的Collider
         GetComponent<Collider>().enabled = true;
         //下一帧开启正常状态的动画系统
-        StartCoroutine(SetAnimatorEnable(true));
+        GetComponent<Animator>().enabled = true;
+
+        Destroy(m_leftFoot.GetComponent<Rigidbody>());
+
+        Destroy(m_rigthFoot.GetComponent<Rigidbody>());
+
+        transform.GetComponent<Rigidbody>().velocity = Vector3.zero;
+
     }
 
-
+    public void Blast(Explosion exception = null)
+    {
+        Dead();
+    }
 }

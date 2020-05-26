@@ -10,11 +10,14 @@ public class TimeLoad : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        var n = gameObject.name;
+        start = Time.time;
     }
 
     public void SetTime(float time)
     {
+        //Debug.Log("setTime" + time);
+
         start = Time.time;
         this.time = time;
     }
@@ -25,6 +28,7 @@ public class TimeLoad : MonoBehaviour
         if(Time.time - start >=  time)
         {
             time = -1;
+            //Debug.Log("load" + transform.parent.name);
             var objClone = Instantiate(obj);
             objClone.transform.position = transform.position;
             objClone.transform.SetParent(this.transform);

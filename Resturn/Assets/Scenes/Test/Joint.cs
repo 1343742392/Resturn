@@ -11,15 +11,16 @@ public class Joint : MonoBehaviour
     [SerializeField] Transform obj = null;
     [SerializeField] float rotSpeed = 0.1f;
     [SerializeField] float posSpeed = 50f;
-    [SerializeField] bool freezeRotX = false;
+/*    [SerializeField] bool freezeRotX = false;
     [SerializeField] bool freezeRotY = false;
-    [SerializeField] bool freezeRotZ = false;
+    [SerializeField] bool freezeRotZ = false;*/
     private float time = 0;
     Vector3 transStartRot = Vector3.zero;
     Vector3 objStartFwd = Vector3.zero;
 
     void Start()
     {
+        if (obj == null) return;
         var myDic = (transform.position - obj.position).normalized;
         objStartFwd = obj.transform.forward;
 

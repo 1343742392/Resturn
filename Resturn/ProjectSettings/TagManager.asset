@@ -3,7 +3,20 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Earth
+  - Stone
+  - Puddle
+  - Grassland
+  - Ellen
+  - Canvas
+  - LightButton
+  - Joystick
+  - Jump
+  - Sun
+  - Input
+  - DeadCamera
+  - AircraftDead
   layers:
   - Default
   - TransparentFX
@@ -14,7 +27,7 @@ TagManager:
   - 
   - 
   - PostProcessing
-  - 
+  - Player
   - 
   - 
   - 

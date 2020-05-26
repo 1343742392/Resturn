@@ -1,6 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
+#if UNITY_EDITOR
+using UnityEditor.SceneManagement;
+
+#endif
 using UnityEngine;
 [ExecuteInEditMode]
 public class AutoSave : MonoBehaviour
@@ -8,7 +12,7 @@ public class AutoSave : MonoBehaviour
     public bool autoSaveScene = true;
     private long oldTime = 0;
     public int intervalScene = 1;
-    public bool showMessage =  true;
+    public bool showMessage =  false;
     void Update()
     {
         if (autoSaveScene)
@@ -25,7 +29,11 @@ public class AutoSave : MonoBehaviour
     {
         try
         {
-            EditorApplication.SaveScene(EditorApplication.currentScene);
+#if UNITY_EDITOR
+            EditorSceneManager.SaveOpenScenes();
+
+
+#endif
         }
         catch
         {

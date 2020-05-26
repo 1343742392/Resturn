@@ -15,4 +15,12 @@ public class Tag
 
     public static string Ellen { get { return "Ellen"; } set { } }
 
+    public static string Input { get { return "Input"; } set { } }
+
+    public static string Sun { get { return "Sun"; } set { } }
+
+    public static string DeadCamera { get { return "DeadCamera"; } set { } }
+
+    public static string AircraftDead { get { return "AircraftDead"; } set { } }
+    
 }

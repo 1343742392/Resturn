@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class ConfigManager : MonoBehaviour
 {
-    [SerializeField] Config config = null;
+    [SerializeField]public Config config = null;
+    public static ConfigManager obj;
     void Start()
     {
         if (config == null) return;
+        obj = this;
         Application.targetFrameRate = config.fps;
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
     }
@@ -16,5 +18,9 @@ public class ConfigManager : MonoBehaviour
     void Update()
     {
         
+    }
+
+    private void OnDestroy()
+    {
     }
 }

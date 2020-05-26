@@ -17,13 +17,15 @@ public class Log
             //vector3 精度问题
             if (t.GetType().Name.Equals("Vector3"))
             {
-                var attrs = new Vector3().GetType().GetProperties();
+                Vector3 vec = (Vector3)t;
+
+/*                var attrs = new Vector3().GetType().GetProperties();
                 var tp = t.GetType();
                 PropertyInfo mi = attrs[0];
                 var x = mi.GetValue(t, new object[] { 0 });
                 var y = mi.GetValue(t, new object[] { 1 });
-                var z = mi.GetValue(t, new object[] { 2 });
-                res += " Vector3  x=" + x + "  y=" + y + "  z=" + z + " ";
+                var z = mi.GetValue(t, new object[] { 2 });*/
+                res += " Vector3  x=" + vec.x + "  y=" + vec.y + "  z=" + vec.z + " ";
                 continue;
             }
             //特殊字符问题 0 替代空字符

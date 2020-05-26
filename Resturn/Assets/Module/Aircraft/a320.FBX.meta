@@ -1,0 +1,196 @@
+fileFormatVersion: 2
+guid: 46061c63dba38704d90b1d6779bd5f12
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: access
+    100004: antenna
+    100006: cpit
+    100008: doorf
+    100010: doorr
+    100012: ele
+    100014: eng
+    100016: engmount
+    100018: exh
+    100020: fans
+    100022: fgear
+    100024: hubs
+    100026: light
+    100028: pitot
+    100030: rgear
+    100032: wheel
+    100034: wing
+    100036: winglet
+    400000: //RootNode
+    400002: access
+    400004: antenna
+    400006: cpit
+    400008: doorf
+    400010: doorr
+    400012: ele
+    400014: eng
+    400016: engmount
+    400018: exh
+    400020: fans
+    400022: fgear
+    400024: hubs
+    400026: light
+    400028: pitot
+    400030: rgear
+    400032: wheel
+    400034: wing
+    400036: winglet
+    2100000: 'Material #50'
+    2100002: 747 1  ( Standard )
+    2100004: 'Material #46'
+    2100006: 'Material #45'
+    2100008: Engine  ( Standard )
+    2100010: 'Material #356  ( Standard )'
+    2100012: 'Material #345  ( Standard )'
+    2100014: dkgrey  ( Standard )
+    2300000: //RootNode
+    2300002: access
+    2300004: antenna
+    2300006: cpit
+    2300008: doorf
+    2300010: doorr
+    2300012: ele
+    2300014: eng
+    2300016: engmount
+    2300018: exh
+    2300020: fans
+    2300022: fgear
+    2300024: hubs
+    2300026: light
+    2300028: pitot
+    2300030: rgear
+    2300032: wheel
+    2300034: wing
+    2300036: winglet
+    3300000: //RootNode
+    3300002: access
+    3300004: antenna
+    3300006: cpit
+    3300008: doorf
+    3300010: doorr
+    3300012: ele
+    3300014: eng
+    3300016: engmount
+    3300018: exh
+    3300020: fans
+    3300022: fgear
+    3300024: hubs
+    3300026: light
+    3300028: pitot
+    3300030: rgear
+    3300032: wheel
+    3300034: wing
+    3300036: winglet
+    4300000: Airbus 320
+    4300002: doorf
+    4300004: wing
+    4300006: rgear
+    4300008: hubs
+    4300010: doorr
+    4300012: eng
+    4300014: fans
+    4300016: exh
+    4300018: engmount
+    4300020: ele
+    4300022: cpit
+    4300024: fgear
+    4300026: wheel
+    4300028: light
+    4300030: pitot
+    4300032: winglet
+    4300034: access
+    4300036: antenna
+    7400000: Take 001
+    9500000: //RootNode
+  externalObjects: {}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 0.0254
+    hasPreviousCalculatedGlobalScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

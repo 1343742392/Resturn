@@ -7,11 +7,31 @@ public abstract class TaskBehavior : MonoBehaviour
 {
     protected ArrayList tasks = new ArrayList();
 
+    private float m_start = 0;
+    private float m_time = -1;
+
+    public Action back = null;
 
     protected  void Update()
     {
+        if (m_time != -1 || back != null)
+        {
+            if (Time.time - m_start >= m_time)
+            {
+                m_time = -1;
+                back();
+            }
+        }
+
+
         UpdateS();
         Task();
+    }
+
+    protected void SetTime(float time)
+    {
+        m_start = Time.time;
+        this.m_time = time;
     }
 
     private void Task()

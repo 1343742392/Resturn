@@ -44,6 +44,25 @@ public class Tool{
         return Quaternion.AngleAxis(angle, ax) * source;
     }
     
+    static public void SetBone( SkinnedMeshRenderer sr, GameObject root)
+    {
+        Transform[] bones = root.GetComponentsInChildren<Transform>();
+        Transform[] bfBone = sr.bones;
+        List<Transform> afBone = new List<Transform>();
+        for(int i = 0; i < bfBone.Length; i ++)
+        {
+            for(int i2 = 0; i2 < bones.Length; i2 ++)
+            {
+                if(bfBone[i].name.Equals(bones[i2].name))
+                {
+                    afBone.Add(bones[i2]);
+                    break;  
+                }
+            }
+        }
+        sr.rootBone = root.transform;
+        sr.bones = afBone.ToArray();
+    }
     static public GameObject GetGameObjAllChild(GameObject gameobj, string childName)
     {
         Transform[] cs = gameobj.transform.GetComponentsInChildren<Transform>();
