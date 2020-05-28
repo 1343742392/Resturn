@@ -22,5 +22,9 @@ public class Tag
     public static string DeadCamera { get { return "DeadCamera"; } set { } }
 
     public static string AircraftDead { get { return "AircraftDead"; } set { } }
-    
+
+    public static string SuccessDoor { get { return "SuccessDoor"; } set { } }
+
+    public static string Compass { get { return "Compass"; } set { } }
+
 }

@@ -12,9 +12,16 @@ public abstract class TaskBehavior : MonoBehaviour
 
     public Action back = null;
 
+    protected bool once = true;
+
     protected  void Update()
     {
-        if (m_time != -1 || back != null)
+        if(once)
+        {
+            StartS();
+            once = false;
+        }
+        if (m_time != -1 && back != null)
         {
             if (Time.time - m_start >= m_time)
             {
@@ -46,4 +53,6 @@ public abstract class TaskBehavior : MonoBehaviour
     }
 
     protected abstract void UpdateS();
+
+    protected abstract void StartS();
 }

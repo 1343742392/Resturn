@@ -34,7 +34,6 @@ public class TouchTarget : TaskBehavior
     private bool m_DragRuning = false;
     private void Start()
     {
-        TouchEvent.obj.targets.Add(this);
 /*        tasks.Add(new Action(()=>
         {
             EventSystem.current.gameObject.GetComponent<TouchEvent>().targets.Add(this);
@@ -76,5 +75,10 @@ public class TouchTarget : TaskBehavior
             m_DragRuning = false;
             //LogDisplay.obj.AddLog(fingerId +  "onDragEnd:" + point + "startp" + m_DragStartPoint);
         }
+    }
+
+    protected override void StartS()
+    {
+        TouchEvent.obj.targets.Add(this);
     }
 }

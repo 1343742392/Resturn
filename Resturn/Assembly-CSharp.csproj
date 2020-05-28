@@ -63,6 +63,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\BlastLight.cs" />
+    <Compile Include="Assets\Compass.cs" />
     <Compile Include="Assets\Scenes\Test\Joint.cs" />
     <Compile Include="Assets\Scenes\Test\SimpleCamera.cs" />
     <Compile Include="Assets\Scenes\Test\Test.cs" />

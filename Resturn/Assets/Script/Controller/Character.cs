@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Unity.UIWidgets.foundation;
 using Unity.UIWidgets.ui;
 using UnityEngine;
@@ -80,24 +81,6 @@ public class Character : TaskBehavior, ExplosionTarget
     private List<Operation> operations = new List<Operation>();
     void Start()
     {
-
-
-        m_animator = GetComponent<Animator>();
-        m_joystick = GameObject.FindWithTag(Tag.joystick)?.GetComponent<Joystick>();
-        m_jumpButton = GameObject.FindWithTag(Tag.jump)?.GetComponent<JumpButton>();
-
-        m_leftFoot = Tool.GetGameObjAllChild(mainBone, m_leftFootName);
-        m_rigthFoot = Tool.GetGameObjAllChild(mainBone, m_rightFootName);
-        if(m_jumpButton!=null) m_jumpButton.OnJump = Jump;
-        m_rigidbody = GetComponent<Rigidbody>();
-
-        m_phone = Tool.GetGameObjAllChild(gameObject, "Phone");
-        m_rightHand = Tool.GetGameObjAllChild(mainBone, "Ellen_Right_Hand");
-        m_spine = Tool.GetGameObjAllChild(mainBone, "Ellen_Spine");
-
-        InitRagdoll();
-        m_timer = GetComponent<Timer>();
-        ToDark.obj?.Show();
     }
 
 
@@ -197,6 +180,7 @@ public class Character : TaskBehavior, ExplosionTarget
             m_rePlayIndex = ConfigManager.obj.config.rePlayFrameNum + offFrame;
          });
         GameObject.FindWithTag(Tag.Input)?.SetActive(false);
+        GameObject.FindWithTag(Tag.Compass)?.SetActive(false);
     }
 
     private void InputEvent(Operation operation = null)
@@ -281,6 +265,7 @@ public class Character : TaskBehavior, ExplosionTarget
 
     private void OnCollisionEnter(Collision collision)
     {
+        if (once) return;
         /*        Debug.Log("inter");*/
         var contactPoints = collision.contacts;
         for (int i = 0; i < contactPoints.Length; i++)
@@ -305,6 +290,7 @@ public class Character : TaskBehavior, ExplosionTarget
 
     private void OnCollisionStay(Collision collision)
     {
+        if (once) return ;
         //Debug.Log("stay" + collision.contactCount);
 /*        m_isGrounded = false;
         m_fLoatTime = Time.time;*/
@@ -324,6 +310,7 @@ public class Character : TaskBehavior, ExplosionTarget
 
     private void OnCollisionExit(Collision collision)
     {
+        if (once) return;
         if (m_Collisions.Contains(collision.collider))
         {
             m_Collisions.Remove(collision.collider);
@@ -459,5 +446,28 @@ public class Character : TaskBehavior, ExplosionTarget
     public void Blast(Explosion exception = null)
     {
         Dead();
+    }
+
+    protected override void StartS()
+    {
+
+        m_animator = GetComponent<Animator>();
+        m_joystick = GameObject.FindWithTag(Tag.joystick)?.GetComponent<Joystick>();
+        m_jumpButton = GameObject.FindWithTag(Tag.jump)?.GetComponent<JumpButton>();
+
+        m_leftFoot = Tool.GetGameObjAllChild(mainBone, m_leftFootName);
+        m_rigthFoot = Tool.GetGameObjAllChild(mainBone, m_rightFootName);
+        if (m_jumpButton != null) m_jumpButton.OnJump = Jump;
+        m_rigidbody = GetComponent<Rigidbody>();
+
+        m_phone = Tool.GetGameObjAllChild(gameObject, "Phone");
+        m_rightHand = Tool.GetGameObjAllChild(mainBone, "Ellen_Right_Hand");
+        m_spine = Tool.GetGameObjAllChild(mainBone, "Ellen_Spine");
+
+        InitRagdoll();
+        m_timer = GetComponent<Timer>();
+        ToDark.obj?.Show();
+
+
     }
 }

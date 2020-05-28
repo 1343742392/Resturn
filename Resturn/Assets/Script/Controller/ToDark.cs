@@ -28,7 +28,15 @@ public class ToDark : MonoBehaviour
 
     public void Show()
     {
-        m_anim?.Play("Show");
+/*        try
+        {*/
+            m_anim?.Play("Show");
+
+/*        }
+        catch
+        {
+
+        }*/
     }
 
     // Update is called once per frame
@@ -39,7 +47,6 @@ public class ToDark : MonoBehaviour
 
     private void OnDestroy()
     {
-        Destroy(obj);
     }
 
 

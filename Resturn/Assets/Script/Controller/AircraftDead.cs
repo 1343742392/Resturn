@@ -11,10 +11,6 @@ public class AircraftDead : TaskBehavior
     // Start is called before the first frame update
     void Start()
     {
-        tasks.Add(new Action(delegate ()
-        {
-            if(m_BlastTime == -1) SetBlastTime(ConfigManager.obj.config.blastTime);
-        }));
     }
 
     public  void SetBlastTime(float blastTime)
@@ -36,5 +32,10 @@ var tls = m_blastTimeLoad.GetComponents<TimeLoad>();
 
     protected override void UpdateS()
     {
+    }
+
+    protected override void StartS()
+    {
+        if (m_BlastTime == -1) SetBlastTime(ConfigManager.obj.config.blastTime);
     }
 }

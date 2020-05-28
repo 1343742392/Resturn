@@ -14,12 +14,7 @@ public class JumpButton : TaskBehavior
     private TouchTarget m_touchTarget = null;
     void Start()
     {
-        m_touchTarget = GetComponent<TouchTarget>();
-        tasks.Add(new Action(() =>
-        {
-            m_touchTarget.OnDragStart = BeginDrag;
-            m_touchTarget.OnDragEnd = EndDrag;
-        }));
+
     }
 
     protected override void UpdateS()
@@ -47,5 +42,12 @@ public class JumpButton : TaskBehavior
         }
 
 
+    }
+
+    protected override void StartS()
+    {
+        m_touchTarget = GetComponent<TouchTarget>();
+        m_touchTarget.OnDragStart = BeginDrag;
+        m_touchTarget.OnDragEnd = EndDrag;
     }
 }

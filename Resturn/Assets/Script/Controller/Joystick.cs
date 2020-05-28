@@ -27,16 +27,7 @@ public class Joystick : TaskBehavior
     private float m_disOver = 0;
     void Start()
     {
-        m_anima = GetComponent<Animator>();
-        m_rectTransform = GetComponent<RectTransform>();
-        m_startPos = m_rectTransform.position;
-        tasks.Add(new Action(()=>
-        {
-            var tt = GetComponent<TouchTarget>();
-            tt.OnStart = OnTouch;
-            tt.OnMove = OnMove;
-            tt.OnEnd = OnEnd;
-        }));
+
     }
 
     protected override void UpdateS()
@@ -121,5 +112,14 @@ public class Joystick : TaskBehavior
         m_anima?.Play("JoystickDown");
     }
 
-
+    protected override void StartS()
+    {
+        m_anima = GetComponent<Animator>();
+        m_rectTransform = GetComponent<RectTransform>();
+        m_startPos = m_rectTransform.position;
+        var tt = GetComponent<TouchTarget>();
+        tt.OnStart = OnTouch;
+        tt.OnMove = OnMove;
+        tt.OnEnd = OnEnd;
+    }
 }

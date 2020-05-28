@@ -2741,6 +2741,7 @@ GameObject:
   - component: {fileID: 7579790336507252447}
   - component: {fileID: 7579790336507252442}
   - component: {fileID: 2737121338324190790}
+  - component: {fileID: 8603112300612317183}
   m_Layer: 0
   m_Name: Ellen
   m_TagString: Ellen
@@ -2985,7 +2986,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9877cbfde3001704296575535d278154, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_rotateSpeed: 40
+  m_rotateSpeed: 60
   m_walkSpeed: 1
   m_runSpeed: 3
   m_jumpPower: 200
@@ -3067,6 +3068,18 @@ CapsuleCollider:
   m_Height: 0.97
   m_Direction: 1
   m_Center: {x: 0, y: 1.16, z: 0}
+--- !u!114 &8603112300612317183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7579790335581062785}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3ee5bc28f3280b4a86b64438858d929, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7579790335581062789
 GameObject:
   m_ObjectHideFlags: 0
