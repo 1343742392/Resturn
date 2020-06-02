@@ -568,7 +568,7 @@ MonoBehaviour:
     childGroupIDs: 050000004a0100007a060000
     lodQualityMultiplier: 1
     geometryMode: 0
-    materialBranch: {fileID: 2100000, guid: cf69de7e1b41130409b70635b3e8092b, type: 2}
+    materialBranch: {fileID: 0}
     materialBreak: {fileID: 0}
     materialFrond: {fileID: 0}
     height: {x: 35.594753, y: 41.901047}
@@ -815,7 +815,7 @@ MonoBehaviour:
     childGroupIDs: 1f000000
     lodQualityMultiplier: 1
     geometryMode: 0
-    materialBranch: {fileID: 2100000, guid: cf69de7e1b41130409b70635b3e8092b, type: 2}
+    materialBranch: {fileID: 0}
     materialBreak: {fileID: 0}
     materialFrond: {fileID: 0}
     height: {x: 11.306283, y: 16.306282}
@@ -1062,7 +1062,7 @@ MonoBehaviour:
     childGroupIDs: 
     lodQualityMultiplier: 1
     geometryMode: 0
-    materialBranch: {fileID: 2100000, guid: cf69de7e1b41130409b70635b3e8092b, type: 2}
+    materialBranch: {fileID: 0}
     materialBreak: {fileID: 0}
     materialFrond: {fileID: 0}
     height: {x: 4.5136127, y: 9.513612}
@@ -1300,7 +1300,7 @@ MonoBehaviour:
     parentGroupID: 5
     childGroupIDs: 
     geometryMode: 1
-    materialLeaf: {fileID: 2100000, guid: d4d7f49b9b732ca4584a061ff1e07bac, type: 2}
+    materialLeaf: {fileID: 0}
     instanceMesh: {fileID: 0}
     size: {x: 1.0879999, y: 1.3413332}
     perpendicularAlign: 0.662
@@ -1397,7 +1397,7 @@ MonoBehaviour:
     parentGroupID: 3
     childGroupIDs: 
     geometryMode: 0
-    materialLeaf: {fileID: 2100000, guid: d4d7f49b9b732ca4584a061ff1e07bac, type: 2}
+    materialLeaf: {fileID: 0}
     instanceMesh: {fileID: 0}
     size: {x: 1.3413334, y: 1.6791112}
     perpendicularAlign: 0

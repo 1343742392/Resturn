@@ -90,7 +90,7 @@ public class Character : TaskBehavior, ExplosionTarget
     {
         if(Input.GetKeyDown(KeyCode.K))
         {
-            m_rePlayIndex = 300;
+            EnableRagdoll();
         }
         if (m_fLoatTime != -1 && Time.time - m_fLoatTime > 1f)
         {
@@ -126,24 +126,38 @@ public class Character : TaskBehavior, ExplosionTarget
         m_animator.SetBool("Light", !m_animator.GetBool("Light"));
     }
 
-    public void Dead()
+    public void Dead(bool haveAudio = true)
     {
         if (m_timer == null ) return;
         EnableRagdoll();
+        if(haveAudio)
+        {
+            GetComponent<CharacterAudio>().Dead();
+        }
+        else
+        {
+            var audios = GetComponentsInChildren<AudioSource>();
+            foreach (var audio in audios)
+            {
+                audio.enabled = false;
+            }
+        }
         
         //开始回放处到死亡的时间
         var index = Math.Min(operations.Count - 1, operations.Count - ConfigManager.obj.config.rePlayFrameNum - 1);
-        
-        var time = Time.time - operations[index].time;
+
+        var time = 0f;
+        if(operations.Count > 0)time = Time.time - operations[index].time;
         //死亡时所在帧
         var deadFrame = operations.Count;
 
         m_timer.SetTime(ConfigManager.obj.config.rePlayWaitTime);
 
         //变暗
-        ToDark.obj?.Fade();
         m_timer.back = new Action(delegate ()
         {
+            ToDark.obj?.Fade();
+
             if (state.Equals("dead"))
                 return;
             state = "dead";
@@ -160,24 +174,31 @@ public class Character : TaskBehavior, ExplosionTarget
                 //Debug.Log(time);
             }
             //布娃娃
-            DisableRagdoll();
-            Camera.main.gameObject.SetActive(false);
+            Camera.main?.gameObject.SetActive(false);
             //相机和光
+
             var dc = GameObject.FindWithTag(Tag.DeadCamera);
-            dc.GetComponent<Camera>().enabled = true;
-            GameObject.FindWithTag(Tag.Sun).GetComponent<Light>().enabled = true;
+            if (dc != null)
+            {
+                DisableRagdoll();
+                dc.GetComponent<Camera>().enabled = true;
+                var al = Tool.GetGameObjAllChild(dc, "AL");
+                al.GetComponent<AudioListener>().enabled = true;
+            }
+            else
+            {
+                GetComponent<CharacterAudio>().Dead();
+            }
+            Sun.sun?.SW();
             //停止变暗
-            ToDark.obj.Stop();
-
-            //声音
-            var al = Tool.GetGameObjAllChild(dc, "AL");
-            al.GetComponent<AudioListener>().enabled = true;
-            
+            ToDark.obj?.Stop();
 
 
-
-            var offFrame = operations.Count - deadFrame;
-            m_rePlayIndex = ConfigManager.obj.config.rePlayFrameNum + offFrame;
+            if(time != 0)
+            {
+                var offFrame = operations.Count - deadFrame;
+                m_rePlayIndex = ConfigManager.obj.config.rePlayFrameNum + offFrame;
+            }
          });
         GameObject.FindWithTag(Tag.Input)?.SetActive(false);
         GameObject.FindWithTag(Tag.Compass)?.SetActive(false);
@@ -185,18 +206,8 @@ public class Character : TaskBehavior, ExplosionTarget
 
     private void InputEvent(Operation operation = null)
     {
-/*        if (Input.GetKeyDown(KeyCode.K))
-        {
-            EnableRagdoll();
-        }
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            DisableRagdoll();
-            transform.position = new Vector3(transform.position.x, 10, transform.position.z);
-            GetComponent<Rigidbody>().velocity = Vector3.zero;
-        }
-*/
-        if (m_joystick != null)
+
+            if (m_joystick != null)
         {
 
 
@@ -209,18 +220,43 @@ public class Character : TaskBehavior, ExplosionTarget
             if (operation == null)
             {
                 //计算
-                verValue = m_joystick.m_vertical;
-                horValue = m_joystick.m_horizontal;
+
+                if (Application.platform == RuntimePlatform.WindowsEditor)
+                {
+                    if (Input.GetKey(KeyCode.W))
+                        verValue += 0.5f;
+                    if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.Q))
+                    {
+                        m_joystick.m_length = 500;
+                        verValue += 0.5f;
+
+                    }
+                    if (Input.GetKey(KeyCode.A))
+                        horValue = -0.5f;
+                    if (Input.GetKey(KeyCode.D))
+                        horValue = 0.5f;
+                    if (Input.GetKey(KeyCode.S))
+                        verValue = -0.5f;
+                    if (Input.GetKey(KeyCode.Space))
+                        Jump();
+                }
+                else
+                {
+                    verValue = m_joystick.m_vertical;
+                    horValue = m_joystick.m_horizontal;
+                }
+
                 if (verValue > 0.7f && m_joystick.m_length > 400)
                 {
                     animaValue = 1;
-                    mov = m_joystick.m_vertical * Time.deltaTime * m_runSpeed;
+                    mov = verValue * Time.deltaTime * m_runSpeed;
                 }
                 else
                 {
                     animaValue = 0.7f;
-                    mov = m_joystick.m_vertical * Time.deltaTime * m_walkSpeed;
+                    mov = verValue * Time.deltaTime * m_walkSpeed;
                 }
+                //Debug.Log(mov);
                 rotY = horValue * Time.deltaTime * m_rotateSpeed;
 
                 //保存
@@ -248,6 +284,7 @@ public class Character : TaskBehavior, ExplosionTarget
 
             if (camera != null)
             {
+                //设置相机位置
                 camera.transform.RotateAround(transform.position, transform.up, rotY);
                 camera.transform.position += mov * transform.forward;
             }
@@ -260,7 +297,15 @@ public class Character : TaskBehavior, ExplosionTarget
         if (m_isJumpStart) return;
         m_isJumpStart = true;
         m_isGrounded = false;
-        m_rigidbody.AddForce(Vector3.up * m_jumpPower);
+
+        if (m_animator.GetBool("Light"))
+        {
+            m_rigidbody.AddForce(Vector3.up * m_jumpPower * 0.6f);
+        }
+        else
+        {
+            m_rigidbody.AddForce(Vector3.up * m_jumpPower);
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -364,6 +409,8 @@ public class Character : TaskBehavior, ExplosionTarget
 
     private void InitRagdoll()
     {
+
+
         RagdollBone.SetActive(false);
         var g = Tool.GetGameObjAllChild(mainBone, "Ellen_Hips");
         var sr = body.GetComponent<SkinnedMeshRenderer>();
@@ -391,11 +438,9 @@ public class Character : TaskBehavior, ExplosionTarget
 
     private void EnableRagdoll()
     {
-        var audios = GetComponentsInChildren<AudioSource>();
-        foreach(var audio in audios)
-        {
-            audio.enabled = false;
-        }
+        camera.GetComponent<Joint>().obj = Tool.GetGameObjAllChild(RagdollBone, "Ellen_Neck").transform;
+
+
         //开启布娃娃状态的所有Rigidbody和Collider
         mainBone.SetActive(false);
         RagdollBone.SetActive(true);
@@ -414,6 +459,9 @@ public class Character : TaskBehavior, ExplosionTarget
 
     private void DisableRagdoll()
     {
+        camera.GetComponent<Joint>().obj = Tool.GetGameObjAllChild(mainBone, "Ellen_Neck").transform;
+
+
         var audios = GetComponentsInChildren<AudioSource>();
         foreach (var audio in audios)
         {

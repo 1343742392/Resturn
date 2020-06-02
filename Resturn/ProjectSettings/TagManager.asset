@@ -17,6 +17,8 @@ TagManager:
   - Input
   - DeadCamera
   - AircraftDead
+  - SuccessDoor
+  - Compass
   layers:
   - Default
   - TransparentFX

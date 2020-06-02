@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 359962490103186041}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -0.22000018}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 6756847319427558723}
   m_RootOrder: 1
@@ -4647,7 +4647,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1457571285824343197
 Transform:
   m_ObjectHideFlags: 0
@@ -4676,7 +4676,7 @@ ParticleSystem:
   cullingMode: 3
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
-  looping: 0
+  looping: 1
   prewarm: 0
   playOnAwake: 1
   useUnscaledTime: 0
@@ -9265,7 +9265,7 @@ Transform:
   m_GameObject: {fileID: 3718047975059535042}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -0.11000003}
-  m_LocalScale: {x: 0.6438464, y: 0.6438475, z: 0.6438475}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children: []
   m_Father: {fileID: 6756847319427558723}
   m_RootOrder: 2
@@ -32832,7 +32832,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2559847249873730632
 Transform:
   m_ObjectHideFlags: 0

@@ -26,6 +26,7 @@ public class CharacterAudio : MonoBehaviour
     [SerializeField] AudioClip FootGrass = null;
     [SerializeField] AudioClip FootPuddle = null;
     [SerializeField] AudioClip FootEarth = null;
+    [SerializeField] AudioClip DeadClip = null;
     public int FootRandomVolume = 2;
     public float StratFootVolume = 1;
     public int FootRandomPitch = 2;
@@ -43,6 +44,7 @@ public class CharacterAudio : MonoBehaviour
 
     string beforeFoot = "";
     private bool m_oldGround = false;
+    private bool m_animaAudio = true;
     void Start()
     {
         m_strength = strength;
@@ -127,9 +129,25 @@ public class CharacterAudio : MonoBehaviour
         return maxIndex;
     }
 
+    public void Dead()
+    {
+        if(DeadClip != null)
+        {
+            m_audioSources[0].clip = DeadClip;
+            m_audioSources[0].loop = false;
+            m_audioSources[0].volume = 1;
+            m_audioSources[0].Play();
+            m_animaAudio = false;
+
+
+        }
+    }
     private void LeftFoot(string obj)
     {
-        int texture = GetMainTexture(transform.position);
+        int texture = -1;
+        if (Terrain.activeTerrain != null)
+            texture = GetMainTexture(transform.position);
+
         if (m_lFootAudio == null) return;
         if (obj.Equals("Stone"))
         {
@@ -150,14 +168,16 @@ public class CharacterAudio : MonoBehaviour
             if (FootEarth == null) return;
             m_lFootAudio.clip = FootEarth;
         }
-        m_lFootAudio.volume = StratFootVolume - (FootRandomVolume * 0.1f) + new System.Random().Next(-FootRandomVolume, FootRandomVolume) * 0.1f;
-        m_lFootAudio.pitch = StratFootPitch + new System.Random().Next(-FootRandomPitch, FootRandomPitch) * 0.1f;
+        m_lFootAudio.volume = StratFootVolume - (FootRandomVolume * 0.01f) + new System.Random().Next(-FootRandomVolume, FootRandomVolume) * 0.1f;
+        m_lFootAudio.pitch = StratFootPitch + new System.Random().Next(-FootRandomPitch, FootRandomPitch) * 0.01f;
         m_lFootAudio.Play();
     }
 
     private void RightFoot(string obj)
     {
-        int texture = GetMainTexture(transform.position);
+        int texture = -1;
+        if (Terrain.activeTerrain != null)
+            texture = GetMainTexture(transform.position);
 
         if (m_rFootAudio == null) return;
         if (obj.Equals("Stone"))
@@ -181,7 +201,7 @@ public class CharacterAudio : MonoBehaviour
             m_rFootAudio.clip = FootEarth;
         }
         m_rFootAudio.volume = StratFootVolume - (FootRandomVolume * 0.1f) + new System.Random().Next(-FootRandomVolume, FootRandomVolume) * 0.1f;
-        m_rFootAudio.pitch = StratFootPitch + new System.Random().Next(-FootRandomPitch, FootRandomPitch) * 0.1f;
+        m_lFootAudio.pitch = StratFootPitch + new System.Random().Next(-FootRandomPitch, FootRandomPitch) * 0.01f;
         m_rFootAudio.Play();
     }
 
@@ -199,7 +219,7 @@ public class CharacterAudio : MonoBehaviour
     }
     void Update()
     {
-
+        if (!m_animaAudio) return;
         if (m_audioSources == null || m_animator == null) return;
 
 

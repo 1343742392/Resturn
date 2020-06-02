@@ -2,7 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-//通过base.Tasks.add(任务)  子类要调用base.UpdateS
+
+    /*
+     * 通过base.Tasks.add(任务)  子类要调用base.UpdateS
+     * 子类不要继承update
+     * starts会在碰撞之后运行 使用once来判断
+     * 
+     * 
+     * */
 public abstract class TaskBehavior : MonoBehaviour
 {
     protected ArrayList tasks = new ArrayList();
@@ -35,10 +42,12 @@ public abstract class TaskBehavior : MonoBehaviour
         Task();
     }
 
-    protected void SetTime(float time)
+    protected void SetTime(float time, Action back = null)
     {
         m_start = Time.time;
         this.m_time = time;
+        if (back != null)
+            this.back = back;
     }
 
     private void Task()

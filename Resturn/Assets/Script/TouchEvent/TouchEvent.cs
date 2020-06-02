@@ -28,7 +28,7 @@ public class TouchEvent : MonoBehaviour
     {
         if (Application.platform == RuntimePlatform.WindowsEditor)
         {
-            if(Input.GetKeyDown(KeyCode.W))
+           /* if(Input.GetKeyDown(KeyCode.W))
             {
                 var t = new Touch { fingerId = 99, phase = TouchPhase.Began, position = new Vector2(300, 300) };
                 Debug.Log(Input.mousePosition);
@@ -51,7 +51,7 @@ public class TouchEvent : MonoBehaviour
                 var t = new Touch { fingerId = 99, phase = TouchPhase.Ended, position =  new Vector2(300, 600) };
                 //Debug.Log(Input.mousePosition);
                 Switch(t);
-            }
+            }*/
 
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {

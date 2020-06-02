@@ -65,7 +65,6 @@
   <ItemGroup>
     <Compile Include="Assets\BlastLight.cs" />
     <Compile Include="Assets\Compass.cs" />
-    <Compile Include="Assets\Scenes\Test\Joint.cs" />
     <Compile Include="Assets\Scenes\Test\SimpleCamera.cs" />
     <Compile Include="Assets\Scenes\Test\Test.cs" />
     <Compile Include="Assets\Scenes\Test\test1.cs" />
@@ -80,6 +79,7 @@
     <Compile Include="Assets\Script\Controller\ButtonTarget.cs" />
     <Compile Include="Assets\Script\Controller\Character.cs" />
     <Compile Include="Assets\Script\Controller\Fly.cs" />
+    <Compile Include="Assets\Script\Controller\Joint.cs" />
     <Compile Include="Assets\Script\Controller\Joystick.cs" />
     <Compile Include="Assets\Script\Controller\JumpButton.cs" />
     <Compile Include="Assets\Script\Controller\LightButton.cs" />
@@ -101,6 +101,8 @@
     <Compile Include="Assets\Script\Tool\Tool.cs" />
     <Compile Include="Assets\Script\TouchEvent\TouchEvent.cs" />
     <Compile Include="Assets\Script\TouchEvent\TouchTarget.cs" />
+    <Compile Include="Assets\Sun.cs" />
+    <Compile Include="Assets\Wolf.cs" />
     <None Include="Assets\Materials\SurfaceShader_VC.shader" />
     <None Include="Assets\Materials\Materials\SculptedHair.shader" />
     <None Include="Assets\Materials\Materials\EyeBallsHD.shader" />
