@@ -63,8 +63,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\BlastLight.cs" />
-    <Compile Include="Assets\Compass.cs" />
     <Compile Include="Assets\Scenes\Test\SimpleCamera.cs" />
     <Compile Include="Assets\Scenes\Test\Test.cs" />
     <Compile Include="Assets\Scenes\Test\test1.cs" />
@@ -76,16 +74,20 @@
     <Compile Include="Assets\Script\Config\Config.cs" />
     <Compile Include="Assets\Script\Config\ConfigManager.cs" />
     <Compile Include="Assets\Script\Controller\AircraftDead.cs" />
+    <Compile Include="Assets\Script\Controller\BlastLight.cs" />
     <Compile Include="Assets\Script\Controller\ButtonTarget.cs" />
     <Compile Include="Assets\Script\Controller\Character.cs" />
+    <Compile Include="Assets\Script\Controller\Compass.cs" />
     <Compile Include="Assets\Script\Controller\Fly.cs" />
     <Compile Include="Assets\Script\Controller\Joint.cs" />
     <Compile Include="Assets\Script\Controller\Joystick.cs" />
     <Compile Include="Assets\Script\Controller\JumpButton.cs" />
     <Compile Include="Assets\Script\Controller\LightButton.cs" />
     <Compile Include="Assets\Script\Controller\Phone.cs" />
+    <Compile Include="Assets\Script\Controller\Sun.cs" />
     <Compile Include="Assets\Script\Controller\TaskBehavior.cs" />
     <Compile Include="Assets\Script\Controller\ToDark.cs" />
+    <Compile Include="Assets\Script\Controller\Wolf.cs" />
     <Compile Include="Assets\Script\Success.cs" />
     <Compile Include="Assets\Script\Tool\AutoHide.cs" />
     <Compile Include="Assets\Script\Tool\AutoSave.cs" />
@@ -101,8 +103,6 @@
     <Compile Include="Assets\Script\Tool\Tool.cs" />
     <Compile Include="Assets\Script\TouchEvent\TouchEvent.cs" />
     <Compile Include="Assets\Script\TouchEvent\TouchTarget.cs" />
-    <Compile Include="Assets\Sun.cs" />
-    <Compile Include="Assets\Wolf.cs" />
     <None Include="Assets\Materials\SurfaceShader_VC.shader" />
     <None Include="Assets\Materials\Materials\SculptedHair.shader" />
     <None Include="Assets\Materials\Materials\EyeBallsHD.shader" />

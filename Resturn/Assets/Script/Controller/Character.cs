@@ -81,6 +81,7 @@ public class Character : TaskBehavior, ExplosionTarget
     private List<Operation> operations = new List<Operation>();
     void Start()
     {
+        Debug.Log(SceneManager.GetActiveScene().buildIndex);
     }
 
 
@@ -178,10 +179,10 @@ public class Character : TaskBehavior, ExplosionTarget
             //相机和光
 
             var dc = GameObject.FindWithTag(Tag.DeadCamera);
-            if (dc != null)
+            dc.GetComponent<Camera>().enabled = true;
+            if (SceneManager.GetActiveScene().buildIndex == 1 )
             {
                 DisableRagdoll();
-                dc.GetComponent<Camera>().enabled = true;
                 var al = Tool.GetGameObjAllChild(dc, "AL");
                 al.GetComponent<AudioListener>().enabled = true;
             }

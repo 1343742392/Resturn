@@ -88,7 +88,8 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaIndirect: 2
     m_PVRFilteringAtrousPositionSigmaAO: 1
     m_ShowResolutionOverlay: 1
-  m_LightingDataAsset: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: f9a971509e802bb4b8e8e1ba12027ccd,
+    type: 2}
   m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
@@ -3120,7 +3121,7 @@ Terrain:
   serializedVersion: 3
   m_TerrainData: {fileID: 15600000, guid: de6e1875646f9d240b8cb494dc9a4dde, type: 2}
   m_TreeDistance: 5000
-  m_TreeBillboardDistance: 50
+  m_TreeBillboardDistance: 5
   m_TreeCrossFadeLength: 5
   m_TreeMaximumFullLODCount: 50
   m_DetailObjectDistance: 80
@@ -3519,8 +3520,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 6.7, y: 3.13, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 6.7000017, y: 3.13, z: 0.92413205}
+  m_Center: {x: -0.05238011, y: 0, z: -0.0639091}
 --- !u!4 &1575417863
 Transform:
   m_ObjectHideFlags: 0
@@ -3657,6 +3658,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5959958634602670145, guid: cb9f19b0423bbb04bbf19c321d56ada2,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5959958634602670147, guid: cb9f19b0423bbb04bbf19c321d56ada2,
         type: 3}
       propertyPath: m_Name
@@ -3726,6 +3732,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 896248988318183920, guid: 148eac080c05bef4693410a8993f9310,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 896248988318183921, guid: 148eac080c05bef4693410a8993f9310,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3780,6 +3791,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 896248988318183922, guid: 148eac080c05bef4693410a8993f9310,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 896248988318183923, guid: 148eac080c05bef4693410a8993f9310,
         type: 3}
