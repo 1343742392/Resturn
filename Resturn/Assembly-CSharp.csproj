@@ -63,6 +63,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\amusedART\StoneMonster\Script\Animation_Test.cs" />
     <Compile Include="Assets\Scenes\Test\SimpleCamera.cs" />
     <Compile Include="Assets\Scenes\Test\Test.cs" />
     <Compile Include="Assets\Scenes\Test\test1.cs" />
@@ -103,6 +104,7 @@
     <Compile Include="Assets\Script\Tool\Tool.cs" />
     <Compile Include="Assets\Script\TouchEvent\TouchEvent.cs" />
     <Compile Include="Assets\Script\TouchEvent\TouchTarget.cs" />
+    <Compile Include="Assets\StoneM.cs" />
     <None Include="Assets\Materials\SurfaceShader_VC.shader" />
     <None Include="Assets\Materials\Materials\SculptedHair.shader" />
     <None Include="Assets\Materials\Materials\EyeBallsHD.shader" />

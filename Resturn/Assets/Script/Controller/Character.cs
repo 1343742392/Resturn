@@ -55,6 +55,7 @@ public class Character : TaskBehavior, ExplosionTarget
 
     public string state = "";
 
+    private float m_movAndRot = 0;
 
     class Operation
     {
@@ -115,6 +116,7 @@ public class Character : TaskBehavior, ExplosionTarget
         }
     }
 
+    public void 
     public void OpenLight()
     {
         if (m_animator == null) return;
@@ -205,6 +207,11 @@ public class Character : TaskBehavior, ExplosionTarget
         GameObject.FindWithTag(Tag.Compass)?.SetActive(false);
     }
 
+    public float GetMov()
+    {
+        return m_movAndRot;
+    }
+
     private void InputEvent(Operation operation = null)
     {
 
@@ -280,7 +287,7 @@ public class Character : TaskBehavior, ExplosionTarget
             transform.localPosition += transform.forward * mov;
             transform.Rotate(0, rotY, 0);
 
-
+            m_movAndRot = Math.Max(verValue, horValue);
 
 
             if (camera != null)
@@ -289,8 +296,11 @@ public class Character : TaskBehavior, ExplosionTarget
                 camera.transform.RotateAround(transform.position, transform.up, rotY);
                 camera.transform.position += mov * transform.forward;
             }
+
         }
     }
+
+
 
     private void Jump()
     {

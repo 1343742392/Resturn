@@ -17,12 +17,14 @@ public class Wolf : TaskBehavior
     public float speed = 10;
 
     public float Radius = 0;
-
+    private ParticleSystem[] bloods = null;
     protected override void StartS()
     {
         m_audioSource = GetComponent<AudioSource>();
         m_anim = GetComponent<Animator>();
         m_player = GameObject.FindWithTag(Tag.Ellen);
+        bloods = GetComponentsInChildren<ParticleSystem>();
+
     }
 
     private void RunAudio()
@@ -47,8 +49,23 @@ public class Wolf : TaskBehavior
             m_audioSource.Play();
     }
 
+    private void Blood()
+    {
+        if (bloods == null) return;
+        foreach(var blood in bloods)
+        {
+            blood.Play();
+        }
+    }
+
     protected override void UpdateS()
     {
+        if(Input.GetKey(KeyCode.K))
+        {
+            Blood();
+
+        }
+
         var playerPos = m_player.transform.position;
         var dis = Vector3.Distance(playerPos, transform.position);
         if(dis <  Radius && dis > 1f)
@@ -56,11 +73,13 @@ public class Wolf : TaskBehavior
             m_anim.SetBool("Wake", true);
         }else if (dis < 1f /*&& !m_anim.GetCurrentAnimatorStateInfo(0).IsName("Wake")*/)
         {
+            m_anim?.SetBool("AttackAble", true);
             BiteAudio();
+            Blood();
+
             var dic = (playerPos - transform.position).normalized;
             transform.transform.forward = dic;
 
-            m_anim?.SetBool("AttackAble", true);
             var cc = m_player.GetComponent<CapsuleCollider>();
             var rig = m_player.GetComponent<Rigidbody>();
             if (rig != null) rig.isKinematic = true;
