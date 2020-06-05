@@ -27,6 +27,9 @@ public class CharacterAudio : MonoBehaviour
     [SerializeField] AudioClip FootPuddle = null;
     [SerializeField] AudioClip FootEarth = null;
     [SerializeField] AudioClip DeadClip = null;
+    [SerializeField] AudioClip HitClip = null;
+    [SerializeField] AudioClip FallClip = null;
+    [SerializeField] AudioClip FallDeadClip = null;
     public int FootRandomVolume = 2;
     public float StratFootVolume = 1;
     public int FootRandomPitch = 2;
@@ -45,6 +48,9 @@ public class CharacterAudio : MonoBehaviour
     string beforeFoot = "";
     private bool m_oldGround = false;
     private bool m_animaAudio = true;
+
+    private bool m_isFall = false;
+    private bool m_once = false;
     void Start()
     {
         m_strength = strength;
@@ -60,6 +66,21 @@ public class CharacterAudio : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
 
+        if(m_isFall)
+        {
+            if (FallDeadClip != null && collision.gameObject.name != "Fall" && collision.gameObject.name != "Camera" && m_once != true)
+            {
+                m_once = true;
+                Debug.Log("run" + collision.gameObject.name);
+                m_audioSources[1].clip = FallDeadClip;
+                m_audioSources[1].loop = false;
+                m_audioSources[1].volume = 1;
+                m_audioSources[1].Play();
+                m_animaAudio = false;
+                GetComponent<Character>().Dead();
+                return;
+            }
+        }
 
         var contactPoints = collision.contacts;
         for (int i = 0; i < contactPoints.Length; i++)
@@ -79,6 +100,7 @@ public class CharacterAudio : MonoBehaviour
             }
         }
     }
+
     private void OnCollisionStay(Collision collision)
     {
     }
@@ -86,6 +108,7 @@ public class CharacterAudio : MonoBehaviour
     {
 
     }
+
 
 
     public static float[] GetTextureMix(Vector3 worldPos)
@@ -129,6 +152,32 @@ public class CharacterAudio : MonoBehaviour
         return maxIndex;
     }
 
+    public void Fall()
+    {
+        if (FallClip != null)
+        {
+            m_audioSources[0].clip = FallClip;
+            m_audioSources[0].loop = false;
+            m_audioSources[0].volume = 1;
+            m_audioSources[0].Play();
+            m_animaAudio = false;
+
+        }
+        m_isFall = true;
+
+    }
+    public void Hit()
+    {
+        if(HitClip != null)
+        {
+            m_audioSources[0].clip = HitClip;
+            m_audioSources[0].loop = false;
+            m_audioSources[0].volume = 1;
+            m_audioSources[0].Play();
+            m_animaAudio = false;
+
+        }
+    }
     public void Dead()
     {
         if(DeadClip != null)

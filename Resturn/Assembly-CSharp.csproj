@@ -64,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\amusedART\StoneMonster\Script\Animation_Test.cs" />
+    <Compile Include="Assets\Fall.cs" />
     <Compile Include="Assets\Scenes\Test\SimpleCamera.cs" />
     <Compile Include="Assets\Scenes\Test\Test.cs" />
     <Compile Include="Assets\Scenes\Test\test1.cs" />

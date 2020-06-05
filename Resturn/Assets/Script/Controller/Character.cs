@@ -55,7 +55,9 @@ public class Character : TaskBehavior, ExplosionTarget
 
     public string state = "";
 
+
     private float m_movAndRot = 0;
+    float m_HP = 100;
 
     class Operation
     {
@@ -115,8 +117,19 @@ public class Character : TaskBehavior, ExplosionTarget
             }
         }
     }
-
-    public void 
+    public void Hit()
+    {
+        m_HP -= 20;
+        if (m_HP <= 0)
+        {
+            Dead();
+        }
+        else
+        {
+            m_animator?.Play("Hit");
+            GetComponent<CharacterAudio>().Hit();
+        }
+    }
     public void OpenLight()
     {
         if (m_animator == null) return;
@@ -132,6 +145,9 @@ public class Character : TaskBehavior, ExplosionTarget
     public void Dead(bool haveAudio = true)
     {
         if (m_timer == null ) return;
+        if (state == "dead")
+            return;
+        state = "dead";
         EnableRagdoll();
         if(haveAudio)
         {
@@ -174,6 +190,7 @@ public class Character : TaskBehavior, ExplosionTarget
                 var newAd = Instantiate(Resources.Load<GameObject>("Profab/AircraftDead"));
                 newAd.transform.position = adpos;
                 newAd.GetComponent<AircraftDead>().SetBlastTime(time);
+
                 //Debug.Log(time);
             }
             //布娃娃
@@ -185,6 +202,7 @@ public class Character : TaskBehavior, ExplosionTarget
             if (SceneManager.GetActiveScene().buildIndex == 1 )
             {
                 DisableRagdoll();
+                state = "";
                 var al = Tool.GetGameObjAllChild(dc, "AL");
                 al.GetComponent<AudioListener>().enabled = true;
             }
@@ -284,18 +302,23 @@ public class Character : TaskBehavior, ExplosionTarget
             }
 
             m_animator?.SetFloat("Blend", (float)Math.Min(verValue, animaValue));
-            transform.localPosition += transform.forward * mov;
-            transform.Rotate(0, rotY, 0);
+            if (state != "dead")
+            {
+                transform.localPosition += transform.forward * mov;
+                transform.Rotate(0, rotY, 0);
+                if (camera != null)
+                {
+                    //设置相机位置
+                    camera.transform.RotateAround(transform.position, transform.up, rotY);
+                    camera.transform.position += mov * transform.forward;
+                }
+            }
+
 
             m_movAndRot = Math.Max(verValue, horValue);
 
 
-            if (camera != null)
-            {
-                //设置相机位置
-                camera.transform.RotateAround(transform.position, transform.up, rotY);
-                camera.transform.position += mov * transform.forward;
-            }
+
 
         }
     }

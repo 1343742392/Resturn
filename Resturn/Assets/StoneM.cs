@@ -9,6 +9,7 @@ public class StoneM : TaskBehavior
     [SerializeField]
     private Transform m_mouth = null;
     private GameObject m_player = null;
+    private Character m_playerC = null;
     private Animator m_anim = null;
     [SerializeField]
     private AudioClip m_runClip = null;
@@ -30,6 +31,8 @@ public class StoneM : TaskBehavior
         m_audioSource = GetComponent<AudioSource>();
         m_anim = GetComponent<Animator>();
         m_player = GameObject.FindWithTag(Tag.Ellen);
+        if (m_player != null)
+            m_playerC = m_player.GetComponent<Character>();
         bloods = GetComponentsInChildren<ParticleSystem>();
 
     }
@@ -52,7 +55,8 @@ public class StoneM : TaskBehavior
         if (m_audioSource.clip != m_biteClip)
             m_audioSource.clip = m_biteClip;
         m_audioSource.loop = false;
-        if (!m_audioSource.isPlaying)
+
+        if (m_playerC.state != "dead")
             m_audioSource.Play();
     }
 
@@ -78,17 +82,36 @@ public class StoneM : TaskBehavior
         m_anim.SetBool("Run", true);
     }
 
+    private bool isLook()
+    {
+        float value = Vector3.Dot(m_objDic, m_player.transform.forward);
+        if (value < -0.5)
+            return true;
+        return false;
+    }
     private void Find()
     {
-        if(m_objDis < Radius /*&& m_player.GetComponent<Character>().GetMov() > 0.5f*/)
+        if(m_objDis < Radius)
         {
-            m_isFind = true;
+            //Debug.Log((m_playerC.GetMov() > 0.6) + "  " +isLook());
+            if ((m_playerC.GetMov() > 0.6) || isLook())
+            {
+                m_isFind = true;
+            }
         }
+
     }
 
     private void Attack()
     {
         m_anim.SetBool("Attack", true);
+    }
+
+    public void AttackArrive()
+    {
+        m_playerC?.Hit();
+        Blood();
+        BiteAudio();
     }
     private bool IsLook()
     {
@@ -142,7 +165,7 @@ public class StoneM : TaskBehavior
             {
                 SetTime(0.3f, new System.Action(delegate ()
                 {
-                    m_player.GetComponent<Character>()?.Dead(true);
+                    m_playerC?.Dead(true);
 
 
                     var b = Tool.GetGameObjAllChild(m_player, "Ellen_Hips");

@@ -17,8 +17,8 @@ public class Success : TaskBehavior
                 if (once == false) return;
                 once = false;
 
-                GameObject.FindWithTag(Tag.Input).SetActive(false);
-                GameObject.FindWithTag(Tag.Compass).SetActive(false);
+                GameObject.FindWithTag(Tag.Input)?.SetActive(false);
+                GameObject.FindWithTag(Tag.Compass)?.SetActive(false);
                 ToDark.obj.Fade();
 
                 var canvas = GameObject.FindWithTag(Tag.canvas);

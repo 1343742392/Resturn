@@ -3048,6 +3048,9 @@ MonoBehaviour:
   FootPuddle: {fileID: 8300000, guid: eb5a39cf96fb38548a07db98c04cbe6b, type: 3}
   FootEarth: {fileID: 0}
   DeadClip: {fileID: 8300000, guid: 33dfa16efd0891c4086924f27660e1e4, type: 3}
+  HitClip: {fileID: 8300000, guid: 232c6b35211257a468e5fe20a29efd34, type: 3}
+  FallClip: {fileID: 8300000, guid: f3467fd8d69f27343a799e8420661554, type: 3}
+  FallDeadClip: {fileID: 8300000, guid: b3a544bfaf5264949b63c5c4d14e57c5, type: 3}
   FootRandomVolume: 0
   StratFootVolume: 0.3
   FootRandomPitch: 10
