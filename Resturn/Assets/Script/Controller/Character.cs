@@ -94,6 +94,8 @@ public class Character : TaskBehavior, ExplosionTarget
     public void GrabHead()
     {
         m_animator?.SetTrigger("GrabHead");
+        ToDark.obj.Fade();
+        Invoke("Dead", 1);
     }
 
     
