@@ -27,4 +27,7 @@ public class Tag
 
     public static string Compass { get { return "Compass"; } set { } }
 
+    public static string DeadGround{ get { return "DeadGround"; }
+set { } }
+
 }

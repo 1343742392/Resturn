@@ -58,7 +58,7 @@ public class Character : TaskBehavior, ExplosionTarget
 
     private float m_movAndRot = 0;
     float m_HP = 100;
-
+    bool m_moveAble = true;
     class Operation
     {
         public Vector3 pos;
@@ -69,7 +69,7 @@ public class Character : TaskBehavior, ExplosionTarget
         public float hor;
         public float animaValue;
         public float time;
-        public Operation(float time,float mov, float rotY, float ver, float hor, float animaValue, Vector3 pos, Vector3 rot)
+        public Operation(float time, float mov, float rotY, float ver, float hor, float animaValue, Vector3 pos, Vector3 rot)
         {
             this.time = time;
             this.mov = mov;
@@ -81,21 +81,45 @@ public class Character : TaskBehavior, ExplosionTarget
             this.rot = rot;
         }
     }
-    private List<Operation> operations = new List<Operation>();
+    private List<Operation> m_operations = new List<Operation>();
     void Start()
     {
-        Debug.Log(SceneManager.GetActiveScene().buildIndex);
     }
 
+    public GameObject GetHead()
+    {
+        return Tool.GetGameObjAllChild(mainBone, "Ellen_Head");
+    }
 
+    public void GrabHead()
+    {
+        m_animator?.SetTrigger("GrabHead");
+    }
 
+    
     // Update is called once per frame
+    public void MoveAble(bool moveAble)
+    {
+        m_moveAble = moveAble;
+    }
+
+    private void RePlayer(float time)
+    {
+        var beforTime = Time.time - time;
+        if (beforTime <= 0) return;
+        var index = 0;
+        for (int f = m_operations.Count - 1; f > -1; f--)
+        {
+            if (m_operations[f].time <= beforTime)
+            {
+                m_rePlayIndex = f;
+                return;
+            }
+        }
+    }
     protected override void UpdateS()
     {
-        if(Input.GetKeyDown(KeyCode.K))
-        {
-            EnableRagdoll();
-        }
+
         if (m_fLoatTime != -1 && Time.time - m_fLoatTime > 1f)
         {
             //Debug.Log("float");
@@ -108,9 +132,9 @@ public class Character : TaskBehavior, ExplosionTarget
             InputEvent();
         else
         {
-            InputEvent(operations[operations.Count - m_rePlayIndex - 1]);
-            m_rePlayIndex = m_rePlayIndex - 1;
-            if(m_rePlayIndex == 0)
+            InputEvent(m_operations[m_rePlayIndex - 1]);
+            m_rePlayIndex = m_rePlayIndex + 1;
+            if (m_rePlayIndex == m_operations.Count - 1)
             {
                 var SceneName = SceneManager.GetActiveScene().name;
                 SceneManager.LoadScene(SceneName);
@@ -142,14 +166,14 @@ public class Character : TaskBehavior, ExplosionTarget
         m_animator.SetBool("Light", !m_animator.GetBool("Light"));
     }
 
-    public void Dead(bool haveAudio = true)
+    public void Dead(bool haveAudio = true, float replayerTime = 1, bool resurrection = false)
     {
-        if (m_timer == null ) return;
+        if (m_timer == null) return;
         if (state == "dead")
             return;
         state = "dead";
         EnableRagdoll();
-        if(haveAudio)
+        if (haveAudio)
         {
             GetComponent<CharacterAudio>().Dead();
         }
@@ -161,14 +185,14 @@ public class Character : TaskBehavior, ExplosionTarget
                 audio.enabled = false;
             }
         }
-        
+
         //开始回放处到死亡的时间
-        var index = Math.Min(operations.Count - 1, operations.Count - ConfigManager.obj.config.rePlayFrameNum - 1);
+        var index = Math.Min(m_operations.Count - 1, m_operations.Count - ConfigManager.obj.config.rePlayFrameNum - 1);
 
         var time = 0f;
-        if(operations.Count > 0)time = Time.time - operations[index].time;
+        if (m_operations.Count > 0) time = Time.time - m_operations[index].time;
         //死亡时所在帧
-        var deadFrame = operations.Count;
+        var deadFrame = m_operations.Count;
 
         m_timer.SetTime(ConfigManager.obj.config.rePlayWaitTime);
 
@@ -177,12 +201,12 @@ public class Character : TaskBehavior, ExplosionTarget
         {
             ToDark.obj?.Fade();
 
-            if (state.Equals("dead"))
-                return;
+
             state = "dead";
 
+            //第一关的飞机和爆炸
             var ad = GameObject.FindWithTag(Tag.AircraftDead);
-            if(ad != null)
+            if (ad != null)
             {
                 //第一关时
                 var adpos = ad.transform.position;
@@ -199,13 +223,17 @@ public class Character : TaskBehavior, ExplosionTarget
 
             var dc = GameObject.FindWithTag(Tag.DeadCamera);
             dc.GetComponent<Camera>().enabled = true;
-            if (SceneManager.GetActiveScene().buildIndex == 1 )
+            if (SceneManager.GetActiveScene().name == "One")
             {
-                DisableRagdoll();
-                state = "";
                 var al = Tool.GetGameObjAllChild(dc, "AL");
                 al.GetComponent<AudioListener>().enabled = true;
             }
+            if (resurrection)
+            {
+                DisableRagdoll();
+                state = "";
+            }
+
             else
             {
                 GetComponent<CharacterAudio>().Dead();
@@ -215,12 +243,13 @@ public class Character : TaskBehavior, ExplosionTarget
             ToDark.obj?.Stop();
 
 
-            if(time != 0)
+            if (time != 0)
             {
-                var offFrame = operations.Count - deadFrame;
-                m_rePlayIndex = ConfigManager.obj.config.rePlayFrameNum + offFrame;
+                var offFrame = m_operations.Count - deadFrame;
+                RePlayer(replayerTime);
+                //_rePlayIndex = ConfigManager.obj.config.rePlayFrameNum + offFrame;
             }
-         });
+        });
         GameObject.FindWithTag(Tag.Input)?.SetActive(false);
         GameObject.FindWithTag(Tag.Compass)?.SetActive(false);
     }
@@ -232,11 +261,12 @@ public class Character : TaskBehavior, ExplosionTarget
 
     private void InputEvent(Operation operation = null)
     {
-
-            if (m_joystick != null)
+        if (Input.GetKeyDown(KeyCode.K))
         {
-
-
+            RePlayer(3);
+        }
+        if (m_joystick != null)
+        {
             float verValue = 0;
             float horValue = 0;
             float mov = 0;
@@ -286,7 +316,7 @@ public class Character : TaskBehavior, ExplosionTarget
                 rotY = horValue * Time.deltaTime * m_rotateSpeed;
 
                 //保存
-                operations.Add(new Operation(Time.time,mov, rotY, verValue, horValue, animaValue, transform.position, transform.rotation.eulerAngles));
+                m_operations.Add(new Operation(Time.time, mov, rotY, verValue, horValue, animaValue, transform.position, transform.rotation.eulerAngles));
 
             }
             else
@@ -301,18 +331,22 @@ public class Character : TaskBehavior, ExplosionTarget
                 //Debug.Log(verValue + " " + animaValue);
             }
 
-            m_animator?.SetFloat("Blend", (float)Math.Min(verValue, animaValue));
-            if (state != "dead")
+            if (m_moveAble == true)
             {
-                transform.localPosition += transform.forward * mov;
-                transform.Rotate(0, rotY, 0);
-                if (camera != null)
+                m_animator?.SetFloat("Blend", (float)Math.Min(verValue, animaValue));
+                if (state != "dead")
                 {
-                    //设置相机位置
-                    camera.transform.RotateAround(transform.position, transform.up, rotY);
-                    camera.transform.position += mov * transform.forward;
+                    transform.localPosition += transform.forward * mov;
+                    transform.Rotate(0, rotY, 0);
+                    if (camera != null)
+                    {
+                        //设置相机位置
+                        camera.transform.RotateAround(transform.position, transform.up, rotY);
+                        camera.transform.position += mov * transform.forward;
+                    }
                 }
             }
+
 
 
             m_movAndRot = Math.Max(verValue, horValue);
@@ -323,6 +357,20 @@ public class Character : TaskBehavior, ExplosionTarget
         }
     }
 
+    public void Fall()
+    {
+
+        GameObject.Destroy(m_leftFoot.GetComponent<CapsuleCollider>());
+        GameObject.Destroy(m_rigthFoot.GetComponent<CapsuleCollider>());
+        m_animator?.Play("Float");
+        m_isGrounded = false;
+        m_phone.transform.SetParent(null);
+        m_phone.AddComponent<Rigidbody>();
+        m_phone.GetComponent<Rigidbody>().useGravity = true;
+        GetComponent<Rigidbody>().freezeRotation = false;
+        GetComponent<Rigidbody>().AddForce(-transform.forward * 100);
+        
+    }
 
 
     private void Jump()
@@ -344,11 +392,13 @@ public class Character : TaskBehavior, ExplosionTarget
 
     private void OnCollisionEnter(Collision collision)
     {
+        //用射线应该更好
         if (once) return;
         /*        Debug.Log("inter");*/
         var contactPoints = collision.contacts;
         for (int i = 0; i < contactPoints.Length; i++)
         {
+
             if (!m_Collisions.Contains(collision.collider))
             {
                 m_Collisions.Add(collision.collider);
@@ -527,7 +577,7 @@ public class Character : TaskBehavior, ExplosionTarget
 
     public void Blast(Explosion exception = null)
     {
-        Dead();
+        Dead(false, 1, true);
     }
 
     protected override void StartS()

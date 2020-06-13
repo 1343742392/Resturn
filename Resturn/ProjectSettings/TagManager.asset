@@ -19,6 +19,7 @@ TagManager:
   - AircraftDead
   - SuccessDoor
   - Compass
+  - DeadGround
   layers:
   - Default
   - TransparentFX

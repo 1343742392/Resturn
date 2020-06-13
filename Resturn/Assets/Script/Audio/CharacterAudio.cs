@@ -68,7 +68,7 @@ public class CharacterAudio : MonoBehaviour
 
         if(m_isFall)
         {
-            if (FallDeadClip != null && collision.gameObject.name != "Fall" && collision.gameObject.name != "Camera" && m_once != true)
+            if (FallDeadClip != null && collision.gameObject.tag == Tag.DeadGround  && m_once != true)
             {
                 m_once = true;
                 Debug.Log("run" + collision.gameObject.name);
@@ -77,7 +77,7 @@ public class CharacterAudio : MonoBehaviour
                 m_audioSources[1].volume = 1;
                 m_audioSources[1].Play();
                 m_animaAudio = false;
-                GetComponent<Character>().Dead();
+                GetComponent<Character>().Dead(true, 7, true);
                 return;
             }
         }
@@ -161,7 +161,6 @@ public class CharacterAudio : MonoBehaviour
             m_audioSources[0].volume = 1;
             m_audioSources[0].Play();
             m_animaAudio = false;
-
         }
         m_isFall = true;
 
