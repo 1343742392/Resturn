@@ -50,4 +50,8 @@ public class JumpButton : TaskBehavior
         m_touchTarget.OnDragStart = BeginDrag;
         m_touchTarget.OnDragEnd = EndDrag;
     }
+
+    protected override void FixedUpdateS()
+    {
+    }
 }

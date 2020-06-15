@@ -19,12 +19,12 @@ public class AircraftDead : TaskBehavior
             {
                 m_blastTimeLoad = Tool.GetGameObjAllChild(gameObject, "Blast");
             }
-var tls = m_blastTimeLoad.GetComponents<TimeLoad>();
+            var tls = m_blastTimeLoad.GetComponents<TimeLoad>();
             foreach (var ts in tls)
             {
                 ts.SetTime(blastTime);
             }
-             m_BlastTime = blastTime;
+            m_BlastTime = blastTime;
         }
 
     // Update is called once per frame
@@ -36,6 +36,10 @@ var tls = m_blastTimeLoad.GetComponents<TimeLoad>();
 
     protected override void StartS()
     {
-        if (m_BlastTime == -1) SetBlastTime(ConfigManager.obj.config.blastTime);
+        if (m_BlastTime == -1) SetBlastTime(Mathf.Max(0, ConfigManager.obj.config.blastTime));
+    }
+
+    protected override void FixedUpdateS()
+    {
     }
 }

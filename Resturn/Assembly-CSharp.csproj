@@ -64,6 +64,7 @@
      <Compile Include="Assets\Script\Audio\EllenAudio.cs" />
      <Compile Include="Assets\Script\Config\Config.cs" />
      <Compile Include="Assets\Script\Config\ConfigManager.cs" />
+     <Compile Include="Assets\Script\ContinueGame.cs" />
      <Compile Include="Assets\Script\Controller\AircraftDead.cs" />
      <Compile Include="Assets\Script\Controller\BlastLight.cs" />
      <Compile Include="Assets\Script\Controller\ButtonTarget.cs" />
@@ -84,6 +85,8 @@
      <Compile Include="Assets\Script\Controller\Sun.cs" />
      <Compile Include="Assets\Script\Controller\TaskBehavior.cs" />
      <Compile Include="Assets\Script\Controller\ToDark.cs" />
+     <Compile Include="Assets\Script\CossDoor.cs" />
+     <Compile Include="Assets\Script\DeadCamera.cs" />
      <Compile Include="Assets\Script\Open.cs" />
      <Compile Include="Assets\Script\StartGame.cs" />
      <Compile Include="Assets\Script\Tool\AutoHide.cs" />

@@ -122,4 +122,8 @@ public class Joystick : TaskBehavior
         tt.OnMove = OnMove;
         tt.OnEnd = OnEnd;
     }
+
+    protected override void FixedUpdateS()
+    {
+    }
 }

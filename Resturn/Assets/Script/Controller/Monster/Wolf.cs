@@ -85,22 +85,24 @@ public class Wolf : TaskBehavior
             if (rig != null) rig.isKinematic = true;
             if (cc != null) cc.enabled = false;
 
-            if(back == null)
-            {
-                SetTime(0.3f, new System.Action(delegate ()
+                AddCallBack(0.3f, new System.Action(delegate ()
                 {
                     m_player.GetComponent<Character>()?.Dead(true) ;
 
 
                     var b = Tool.GetGameObjAllChild(m_player, "Ellen_Hips");
-                    b.GetComponent<Rigidbody>().isKinematic = true;
-                    b.transform.position = m_mouth.position;
-                    b.transform.SetParent(m_mouth);
+                    if(b!=null)
+                    {
+                        b.GetComponent<Rigidbody>().isKinematic = true;
+                        b.transform.position = m_mouth.position;
+                        b.transform.SetParent(m_mouth);
+                    }
+
 
                     
 
                 }));
-            }
+            
 
         }
         if(Input.GetKeyDown(KeyCode.K))
@@ -128,6 +130,10 @@ public class Wolf : TaskBehavior
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, Radius);
+    }
+
+    protected override void FixedUpdateS()
+    {
     }
 
     // Update is called once per frame

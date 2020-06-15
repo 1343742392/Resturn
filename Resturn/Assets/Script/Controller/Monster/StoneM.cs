@@ -188,6 +188,10 @@ public class StoneM : TaskBehavior
         Gizmos.DrawWireSphere(transform.position, Radius);
     }
 
+    protected override void FixedUpdateS()
+    {
+    }
+
 
     // Update is called once per frame
 

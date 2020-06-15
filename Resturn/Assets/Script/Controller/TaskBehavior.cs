@@ -10,16 +10,45 @@ using UnityEngine;
      * 
      * 
      * */
+
 public abstract class TaskBehavior : MonoBehaviour
 {
+
+    class CallBack
+    {
+        public CallBack(float startTime, float time, Action back)
+        {
+            this.startTime = startTime; 
+            this.time = time;
+            this.back = back;
+        }
+        public float startTime;
+        public float time;
+        public  Action back;
+    }
+
+    private ArrayList m_callBacks = new ArrayList();
     protected ArrayList tasks = new ArrayList();
 
-    private float m_start = 0;
-    private float m_time = -1;
-
-    public Action back = null;
-
     protected bool once = true;
+
+    private void FixedUpdate()
+    {
+        for(var i = 0; i < m_callBacks.Count;)
+        {
+            CallBack cb = (CallBack) m_callBacks[i];
+            if (Time.time - cb.startTime >= cb.time)
+            {
+                cb.back();
+                m_callBacks.Remove(cb);
+            }
+            else
+            {
+                i ++;
+            }
+        }
+        FixedUpdateS();
+    }
 
     protected  void Update()
     {
@@ -28,26 +57,15 @@ public abstract class TaskBehavior : MonoBehaviour
             StartS();
             once = false;
         }
-        if (m_time != -1 && back != null)
-        {
-            if (Time.time - m_start >= m_time)
-            {
-                m_time = -1;
-                back();
-            }
-        }
 
 
         UpdateS();
         Task();
     }
 
-    protected void SetTime(float time, Action back = null)
+    protected void AddCallBack(float time, Action back = null)
     {
-        m_start = Time.time;
-        this.m_time = time;
-        if (back != null)
-            this.back = back;
+        m_callBacks.Add(new CallBack(Time.time, time, back));
     }
 
     private void Task()
@@ -62,6 +80,7 @@ public abstract class TaskBehavior : MonoBehaviour
     }
 
     protected abstract void UpdateS();
+    protected abstract void FixedUpdateS();
 
     protected abstract void StartS();
 }

@@ -22,10 +22,7 @@ public class Fly : TaskBehavior
             transform.Rotate(Time.deltaTime * 2 , 0, 0);
     }
 
-    private void FixedUpdate()
-    {
-        Debug.Log(async.progress);
-    }
+
 
     // Start is called before the first frame update
     void Start()
@@ -36,25 +33,25 @@ public class Fly : TaskBehavior
         async.allowSceneActivation = false;
 
 
-        SetTime(4);
-        back = delegate ()
+        AddCallBack(4, new System.Action(delegate()
         {
             m_fall = true;
-            SetTime(6);
-            back = delegate ()
+            AddCallBack(6, new System.Action(delegate()
             {
-
-
                 ToDark.obj.Fade();
-                SetTime(2);
-                back = delegate
-                {
-                    async.allowSceneActivation = true;
-                    //Application.LoadLevel("");
+                    AddCallBack(2,new System.Action(delegate()
+                    {
+                        async.allowSceneActivation = true;
 
-                };
-            };
-        };
+                    }));
+            }));
+
+        }));
+
+    }
+
+    protected override void FixedUpdateS()
+    {
     }
 
     // Update is called once per frame

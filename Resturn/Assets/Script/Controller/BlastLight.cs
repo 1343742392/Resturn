@@ -1,16 +1,21 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class BlastLight : TaskBehavior
 {
+    protected override void FixedUpdateS()
+    {
+    }
+
     protected override void StartS()
     {
-        SetTime(ConfigManager.obj.config.blastTime);
-        back = () =>
+        AddCallBack(ConfigManager.obj.config.blastTime, new Action(delegate()
         {
             GetComponent<Animator>()?.Play("BlastLight");
-        };
+            
+        }));
     }
 
     protected override void UpdateS()

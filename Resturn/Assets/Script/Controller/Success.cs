@@ -29,12 +29,12 @@ public class Success : TaskBehavior
                 obj.GetComponent<Character>().MoveAble(false);
                 obj.GetComponent<Animator>().SetFloat("Blend", 0);
 
-                back = () =>
-                {
+                AddCallBack(2, new System.Action(delegate(){
                     async.allowSceneActivation = true;
-                };
-                SetTime(2);
 
+                }));
+                PlayerPrefs.SetInt("LV", SceneManager.GetActiveScene().buildIndex + 1);
+                PlayerPrefs.Save();
             }
         }
     }
@@ -51,6 +51,10 @@ public class Success : TaskBehavior
     }
 
     protected override void StartS()
+    {
+    }
+
+    protected override void FixedUpdateS()
     {
     }
 }

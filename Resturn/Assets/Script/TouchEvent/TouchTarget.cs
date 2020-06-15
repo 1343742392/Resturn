@@ -81,4 +81,8 @@ public class TouchTarget : TaskBehavior
     {
         TouchEvent.obj.targets.Add(this);
     }
+
+    protected override void FixedUpdateS()
+    {
+    }
 }

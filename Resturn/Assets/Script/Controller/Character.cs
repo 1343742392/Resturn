@@ -49,7 +49,6 @@ public class Character : TaskBehavior, ExplosionTarget
     private GameObject RagdollBone = null;
     [SerializeField]
     private GameObject body = null;
-    private Timer m_timer = null;
 
     private int m_rePlayIndex = -1;
 
@@ -69,7 +68,9 @@ public class Character : TaskBehavior, ExplosionTarget
         public float hor;
         public float animaValue;
         public float time;
-        public Operation(float time, float mov, float rotY, float ver, float hor, float animaValue, Vector3 pos, Vector3 rot)
+
+        public bool ground;
+        public Operation(float time, float mov, float rotY, float ver, float hor, float animaValue, Vector3 pos, Vector3 rot, bool ground)
         {
             this.time = time;
             this.mov = mov;
@@ -79,6 +80,7 @@ public class Character : TaskBehavior, ExplosionTarget
             this.animaValue = animaValue;
             this.pos = pos;
             this.rot = rot;
+            this.ground = ground;
         }
     }
     private List<Operation> m_operations = new List<Operation>();
@@ -94,9 +96,17 @@ public class Character : TaskBehavior, ExplosionTarget
     public void GrabHead()
     {
         m_animator?.SetTrigger("GrabHead");
-        ToDark.obj.Fade();
-        Invoke("Dead", 1);
+        AddCallBack(2, new Action(delegate(){
+            ToDark.obj.Fade();
+            AddCallBack(2, new Action(delegate()
+            {
+                RePlay(3);
+            }));
+        }));
+
     }
+
+
 
     
     // Update is called once per frame
@@ -105,7 +115,7 @@ public class Character : TaskBehavior, ExplosionTarget
         m_moveAble = moveAble;
     }
 
-    private void RePlayer(float time)
+    private void ReOperation(float time)
     {
         var beforTime = Time.time - time;
         if (beforTime <= 0) return;
@@ -128,7 +138,6 @@ public class Character : TaskBehavior, ExplosionTarget
             m_isGrounded = false;
         }
         //Debug.Log(m_isGrounded);
-        m_animator?.SetBool("Ground", m_isGrounded);
 
         if (m_rePlayIndex == -1)
             InputEvent();
@@ -142,6 +151,8 @@ public class Character : TaskBehavior, ExplosionTarget
                 SceneManager.LoadScene(SceneName);
             }
         }
+        m_animator?.SetBool("Ground", m_isGrounded);
+
     }
     public void Hit()
     {
@@ -168,9 +179,59 @@ public class Character : TaskBehavior, ExplosionTarget
         m_animator.SetBool("Light", !m_animator.GetBool("Light"));
     }
 
-    public void Dead(bool haveAudio = true, float replayerTime = 1, bool resurrection = false)
+    private void RePlay(float replayTime = 1, bool resurrection = false)
     {
-        if (m_timer == null) return;
+    ToDark.obj?.Fade();
+        state = "dead";
+
+        //第一关的飞机和爆炸
+        var ad = GameObject.FindWithTag(Tag.AircraftDead);
+        if (ad != null)
+        {
+            //第一关时
+            var adpos = ad.transform.position;
+            Destroy(ad);
+            var newAd = Instantiate(Resources.Load<GameObject>("Profab/AircraftDead"));
+            newAd.transform.position = adpos;
+            newAd.GetComponent<AircraftDead>().SetBlastTime(replayTime - 2f);
+
+            //Debug.Log(time);
+        }
+        //布娃娃
+        Camera.main?.gameObject.SetActive(false);
+        //相机和光
+
+        var dc = GameObject.FindWithTag(Tag.DeadCamera);
+        dc.GetComponent<Camera>().enabled = true;
+        if (SceneManager.GetActiveScene().name == "One")
+        {
+            var al = Tool.GetGameObjAllChild(dc, "AL");
+            al.GetComponent<AudioListener>().enabled = true;
+        }
+        if (resurrection)
+        {
+            DisableRagdoll();
+            state = "";
+        }
+
+        else
+        {
+            GetComponent<CharacterAudio>().Dead();
+        }
+        Sun.sun?.SW();
+        //停止变暗
+        ToDark.obj?.Stop();
+
+
+        if (replayTime != 0)
+        {
+            //var offFrame = m_operations.Count - deadFrame;
+            ReOperation(replayTime);
+            //_rePlayIndex = ConfigManager.obj.config.rePlayFrameNum + offFrame;
+        }
+    }
+    public void Dead(bool haveAudio = true, float replayTime = 1, bool resurrection = false)
+    {
         if (state == "dead")
             return;
         state = "dead";
@@ -187,71 +248,22 @@ public class Character : TaskBehavior, ExplosionTarget
                 audio.enabled = false;
             }
         }
+        
+        // //开始回放处到死亡的时间
+        // var index = Math.Min(m_operations.Count - 1, m_operations.Count - ConfigManager.obj.config.rePlayTime - 1);
 
-        //开始回放处到死亡的时间
-        var index = Math.Min(m_operations.Count - 1, m_operations.Count - ConfigManager.obj.config.rePlayFrameNum - 1);
-
-        var time = 0f;
-        if (m_operations.Count > 0) time = Time.time - m_operations[index].time;
+        // var time = 0f;
+        // if (m_operations.Count > 0) time = Time.time - m_operations[index].time;
         //死亡时所在帧
         var deadFrame = m_operations.Count;
 
-        m_timer.SetTime(ConfigManager.obj.config.rePlayWaitTime);
-
-        //变暗
-        m_timer.back = new Action(delegate ()
+        AddCallBack(ConfigManager.obj.config.rePlayWaitTime, new Action(delegate()
         {
-            ToDark.obj?.Fade();
+            RePlay(replayTime, resurrection);
+        })
+        );
 
 
-            state = "dead";
-
-            //第一关的飞机和爆炸
-            var ad = GameObject.FindWithTag(Tag.AircraftDead);
-            if (ad != null)
-            {
-                //第一关时
-                var adpos = ad.transform.position;
-                Destroy(ad);
-                var newAd = Instantiate(Resources.Load<GameObject>("Profab/AircraftDead"));
-                newAd.transform.position = adpos;
-                newAd.GetComponent<AircraftDead>().SetBlastTime(time);
-
-                //Debug.Log(time);
-            }
-            //布娃娃
-            Camera.main?.gameObject.SetActive(false);
-            //相机和光
-
-            var dc = GameObject.FindWithTag(Tag.DeadCamera);
-            dc.GetComponent<Camera>().enabled = true;
-            if (SceneManager.GetActiveScene().name == "One")
-            {
-                var al = Tool.GetGameObjAllChild(dc, "AL");
-                al.GetComponent<AudioListener>().enabled = true;
-            }
-            if (resurrection)
-            {
-                DisableRagdoll();
-                state = "";
-            }
-
-            else
-            {
-                GetComponent<CharacterAudio>().Dead();
-            }
-            Sun.sun?.SW();
-            //停止变暗
-            ToDark.obj?.Stop();
-
-
-            if (time != 0)
-            {
-                var offFrame = m_operations.Count - deadFrame;
-                RePlayer(replayerTime);
-                //_rePlayIndex = ConfigManager.obj.config.rePlayFrameNum + offFrame;
-            }
-        });
         GameObject.FindWithTag(Tag.Input)?.SetActive(false);
         GameObject.FindWithTag(Tag.Compass)?.SetActive(false);
     }
@@ -265,7 +277,7 @@ public class Character : TaskBehavior, ExplosionTarget
     {
         if (Input.GetKeyDown(KeyCode.K))
         {
-            RePlayer(3);
+            ReOperation(3);
         }
         if (m_joystick != null)
         {
@@ -316,9 +328,9 @@ public class Character : TaskBehavior, ExplosionTarget
                 }
                 //Debug.Log(mov);
                 rotY = horValue * Time.deltaTime * m_rotateSpeed;
-
+                //Debug.Log(transform.position);
                 //保存
-                m_operations.Add(new Operation(Time.time, mov, rotY, verValue, horValue, animaValue, transform.position, transform.rotation.eulerAngles));
+                m_operations.Add(new Operation(Time.time, mov, rotY, verValue, horValue, animaValue, transform.position, transform.rotation.eulerAngles, m_isGrounded));
 
             }
             else
@@ -329,7 +341,9 @@ public class Character : TaskBehavior, ExplosionTarget
                 rotY = operation.rotY;
                 animaValue = operation.animaValue;
                 transform.position = operation.pos;
+                //Debug.Log(operation.pos);
                 transform.rotation = Quaternion.Euler(operation.rot);
+                m_isGrounded = operation.ground;
                 //Debug.Log(verValue + " " + animaValue);
             }
 
@@ -362,8 +376,8 @@ public class Character : TaskBehavior, ExplosionTarget
     public void Fall()
     {
 
-        GameObject.Destroy(m_leftFoot.GetComponent<CapsuleCollider>());
-        GameObject.Destroy(m_rigthFoot.GetComponent<CapsuleCollider>());
+        m_leftFoot.GetComponent<CapsuleCollider>();
+        m_rigthFoot.GetComponent<CapsuleCollider>();
         m_animator?.Play("Float");
         m_isGrounded = false;
         m_phone.transform.SetParent(null);
@@ -579,7 +593,7 @@ public class Character : TaskBehavior, ExplosionTarget
 
     public void Blast(Explosion exception = null)
     {
-        Dead(false, 1, true);
+        Dead(false, ConfigManager.obj.config.rePlayTime, true);
     }
 
     protected override void StartS()
@@ -599,9 +613,12 @@ public class Character : TaskBehavior, ExplosionTarget
         m_spine = Tool.GetGameObjAllChild(mainBone, "Ellen_Spine");
 
         InitRagdoll();
-        m_timer = GetComponent<Timer>();
         ToDark.obj?.Show();
 
 
+    }
+
+    protected override void FixedUpdateS()
+    {
     }
 }

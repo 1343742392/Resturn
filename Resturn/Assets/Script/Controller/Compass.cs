@@ -12,6 +12,10 @@ public class Compass : TaskBehavior
 
     float angle = 0;
 
+    protected override void FixedUpdateS()
+    {
+    }
+
     protected override void StartS()
     {
     }
