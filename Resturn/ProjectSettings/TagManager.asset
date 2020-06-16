@@ -20,6 +20,7 @@ TagManager:
   - SuccessDoor
   - Compass
   - DeadGround
+  - SetPage
   layers:
   - Default
   - TransparentFX

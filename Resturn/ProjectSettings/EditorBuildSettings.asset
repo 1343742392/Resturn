@@ -32,4 +32,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/LV/Five.unity
     guid: 7f7533a8a9e70e646b0fb3b3ecbf0d33
+  - enabled: 0
+    path: Assets/Scenes/Test/CossDoorTest.unity
+    guid: cf369dd10ed83fc44a5ef3512968c3f0
   m_configObjects: {}

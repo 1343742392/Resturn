@@ -54,6 +54,7 @@ public class Character : TaskBehavior, ExplosionTarget
 
     public string state = "";
 
+    private bool m_once = true;
 
     private float m_movAndRot = 0;
     float m_HP = 100;
@@ -68,6 +69,7 @@ public class Character : TaskBehavior, ExplosionTarget
         public float hor;
         public float animaValue;
         public float time;
+
 
         public bool ground;
         public Operation(float time, float mov, float rotY, float ver, float hor, float animaValue, Vector3 pos, Vector3 rot, bool ground)
@@ -131,7 +133,6 @@ public class Character : TaskBehavior, ExplosionTarget
     }
     protected override void UpdateS()
     {
-
         if (m_fLoatTime != -1 && Time.time - m_fLoatTime > 1f)
         {
             //Debug.Log("float");
@@ -143,11 +144,13 @@ public class Character : TaskBehavior, ExplosionTarget
             InputEvent();
         else
         {
+           // LogDisplay.obj.AddLog(m_rePlayIndex - 1 + "   " + m_operations.Count);
             InputEvent(m_operations[m_rePlayIndex - 1]);
             m_rePlayIndex = m_rePlayIndex + 1;
-            if (m_rePlayIndex == m_operations.Count - 1)
+            if (m_rePlayIndex + 150 >= m_operations.Count)
             {
                 var SceneName = SceneManager.GetActiveScene().name;
+               // LogDisplay.obj.AddLog("run");
                 SceneManager.LoadScene(SceneName);
             }
         }
@@ -203,20 +206,18 @@ public class Character : TaskBehavior, ExplosionTarget
 
         var dc = GameObject.FindWithTag(Tag.DeadCamera);
         dc.GetComponent<Camera>().enabled = true;
-        if (SceneManager.GetActiveScene().name == "One")
-        {
-            var al = Tool.GetGameObjAllChild(dc, "AL");
-            al.GetComponent<AudioListener>().enabled = true;
-        }
+        var al = Tool.GetGameObjAllChild(dc, "AL");
+
+        al.GetComponent<AudioListener>().enabled = true;
+
+        var cAudio =GetComponent<CharacterAudio>();
         if (resurrection)
         {
             DisableRagdoll();
             state = "";
-        }
-
-        else
+        } else
         {
-            GetComponent<CharacterAudio>().Dead();
+            cAudio.Dead();
         }
         Sun.sun?.SW();
         //停止变暗
@@ -242,6 +243,7 @@ public class Character : TaskBehavior, ExplosionTarget
         }
         else
         {
+
             var audios = GetComponentsInChildren<AudioSource>();
             foreach (var audio in audios)
             {
@@ -340,7 +342,11 @@ public class Character : TaskBehavior, ExplosionTarget
                 mov = operation.mov;
                 rotY = operation.rotY;
                 animaValue = operation.animaValue;
-                transform.position = operation.pos;
+                // if(m_once)
+                // {
+                    transform.position = operation.pos;
+                //     m_once = false;
+                // }
                 //Debug.Log(operation.pos);
                 transform.rotation = Quaternion.Euler(operation.rot);
                 m_isGrounded = operation.ground;

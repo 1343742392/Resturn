@@ -62,6 +62,8 @@ public class CharacterAudio : MonoBehaviour
     }
 
     // Update is called once per frame
+    
+
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -77,7 +79,7 @@ public class CharacterAudio : MonoBehaviour
                 m_audioSources[1].volume = 1;
                 m_audioSources[1].Play();
                 m_animaAudio = false;
-                GetComponent<Character>().Dead(true, 7, true);
+                GetComponent<Character>().Dead(true, 5, true);
                 return;
             }
         }

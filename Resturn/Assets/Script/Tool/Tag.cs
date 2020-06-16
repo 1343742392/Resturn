@@ -30,4 +30,7 @@ public class Tag
     public static string DeadGround{ get { return "DeadGround"; }
 set { } }
 
+    public static string SetPage{ get { return "SetPage"; }
+set { } }
+
 }
